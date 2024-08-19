@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DisplaySquare, DisplayState, DisplayStateService } from '../core/display-state.service';
+import { ClueLabel, DisplayState, DisplayStateService, GridSquare, WordSquare } from '../core/display-state.service';
 import { PuzzleStateService } from '../core/puzzle-state.service';
 
 @Component({
@@ -22,8 +22,43 @@ export class GridDisplayComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  clicked(square: DisplaySquare): void {
-    this.grid.moveCursorToSquareOrToggle(square.location);
+  gridClicked(square: GridSquare): void {
+    this.grid.moveToGridSquare(square);
+  }
+
+  wordClicked(square: WordSquare): void {
+    this.grid.moveToWordSquare(square);
+  }
+
+  getViewBox(): string {
+    const width = 40 * this.grid.getDisplay().length + 2;
+    const height = 40 * this.grid.getDisplay()[0].length + 2;
+    return `0 0 ${height} ${width}`
+
+  }
+
+  displayLabel(l: ClueLabel): string {
+    return String.fromCharCode('A'.charCodeAt(0) + l)
+  }
+
+  getSquareStyle(square: GridSquare): string {
+    if (square.value == null) {
+      if (square.focused) {
+        return "stroke-width: 1; stroke: rgb(55,55,55); fill:rgb(90, 30, 90);"
+      } else {
+        return "stroke-width: 1; stroke: rgb(55,55,55); fill:rgb(0,0,0);"
+      }
+    }
+    if (square.focused) {
+      return "fill: rgb(241,245,130); stroke-width: 1; stroke: rgb(55,55,55);"
+    }
+    if (square.value.state == this.displayState.REGULAR) {
+      return "fill: rgb(255,255,255); stroke-width: 1; stroke: rgb(55,55,55);"
+    }
+    if (square.value.state == this.displayState.HIGHLIGHTED) {
+      return "fill: rgb(153,204,205); stroke-width: 1; stroke: rgb(55,55,55);"
+    }
+    return "";
   }
 
   // @HostListener('window:keydown', ['$event'])
@@ -62,10 +97,12 @@ export class GridDisplayComponent implements OnInit {
         return;
       case 'ArrowDown':
       case 'Down':
-        this.grid?.moveDown(1);
+        this.grid.moveDown(1);
         event.preventDefault();
         return;
       case 'Tab':
+        // handle tab
+        return;
       case 'Enter':
         return;
       case 'Backspace':
@@ -75,10 +112,6 @@ export class GridDisplayComponent implements OnInit {
       case ' ':
       case 'Spacebar':
         this.grid.mutateAndStep('', 1);
-        event.preventDefault();
-        return;
-      case '.':
-        this.grid.mutateAndStep(null, 1);
         event.preventDefault();
         return;
     }

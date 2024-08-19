@@ -1,113 +1,97 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, max, Observable, Subscription } from 'rxjs';
 import { CrosswordComponent } from '../crossword/crossword.component';
-import { WordInfo, Word, Value, Cursor, Location, PuzzleState, Orientation, PuzzleStateService, WordPosition, Square, cursorEqual } from './puzzle-state.service';
+import { Cursor, PuzzleStateService, ValueLabel, Group, GroupIndex, FillState } from './puzzle-state.service';
+import { Square, Puzzle } from './acrformat.service';
+import { PuzzleLibraryService } from './puzzle-library.service';
 
-function wordToDisplay(word: Word, pos: WordPosition): DisplayWord {
+export type ClueLabel = number;
+
+export interface Location {
+  row: number,
+  column: number,
+}
+
+function toGroupIndex(l: Location): GroupIndex {
+  const maxWidth = 10000;
+  return l.row * maxWidth + l.column;
+}
+
+function toLocation(g: GroupIndex): Location {
+  const maxWidth = 10000;
   return {
-    location: word.squares[0].location,
-    // Note: value cannot be null within a word.
-    characters: word.squares.map(s => s.value == null ? '' : s.value.toLowerCase()),
-    wordNumber: pos.word,
-    cursorPosition: pos.position,
-    clue: word.clue.value,
-  };
-}
-
-function wordsToDisplayClues(words: IterableIterator<Word>): DisplayClue[] {
-  const clues = [];
-  for (const word of words) {
-    const text = word.squares.map((s: Square) => {
-      if (s.value === '') {
-        return '_';
-      } else {
-        return s.value;
-      }
-    }).join('');
-    clues.push({
-      index: word.index,
-      clue: word.clue.value,
-      word: text,
-      cursor: word.clue.cursor,
-      focus: false,
-    });
-  }
-  return clues;
-}
-
-function switchOrientation(orientation: Orientation): Orientation {
-  switch (orientation) {
-    case Orientation.ACROSS:
-      return Orientation.DOWN;
-    case Orientation.DOWN:
-      return Orientation.ACROSS;
+    row: Math.floor(g / maxWidth),
+    column: g % maxWidth,
   }
 }
 
 export enum DisplayState {
   REGULAR,
   HIGHLIGHTED,
-  FOCUS,
 }
 
-export interface DisplaySquare {
-  readonly location: Location;
-  value: Value;
-  wordNumber: number | null;
+export interface LinkedValue {
+  readonly mapping: ValueLabel;
+  readonly label: ClueLabel;
+
   state: DisplayState;
+  value: string;
 }
 
-export interface DisplayWord {
+export interface GridSquare {
   readonly location: Location;
-  readonly characters: string[];
-  readonly wordNumber: number;
-  readonly cursorPosition: number;
-  readonly clue: string;
+  readonly value: LinkedValue | null;
+  focused: boolean;
+}
+
+export interface WordSquare {
+  readonly group: Group;
+  readonly index: GroupIndex;
+  readonly value: LinkedValue;
+  focused: boolean;
+}
+
+export interface DisplayGrid {
+  rows: number;
+  columns: number;
+  display: GridSquare[][];
+  valueToSquare: Map<ValueLabel, GridSquare>;
+
 }
 
 export interface DisplayClue {
-  readonly index: number;
-  readonly word: string;
-  readonly clue: string;
-  readonly cursor: Cursor;
-  focus: boolean;
+  readonly group: Group;
+  readonly hint: string;
+  readonly label: ClueLabel;
+  readonly squares: ReadonlyArray<WordSquare>;
 }
 
-export interface CurrentWord {
-  readonly cursor: Cursor;
-  readonly across: DisplayWord;
-  readonly down: DisplayWord;
+export interface DisplayAuthor {
+  readonly group: Group;
+  readonly squares: ReadonlyArray<WordSquare>;
+}
+
+export interface Display {
+  grid: DisplayGrid;
+  clues: DisplayClue[];
+  author: DisplayAuthor;
+}
+
+function clamp(min: number, x: number, max: number) {
+  return Math.max(min, Math.min(max, x));
 }
 
 @Injectable()
 export class DisplayStateService implements OnDestroy {
   private subscriptions = new Subscription();
-  private puzzleStateService: PuzzleStateService;
-  private display: DisplaySquare[][];
-  private acrossClues: DisplayClue[];
-  private downClues: DisplayClue[];
+  private display: Display;
 
-  private rows!: number;
-  private columns!: number;
-  private wordInfo!: WordInfo;
   private cursor!: Cursor;
 
-  private currentWord: BehaviorSubject<CurrentWord | null>;
-
-  constructor(puzzleStateService: PuzzleStateService) {
-    this.puzzleStateService = puzzleStateService;
+  constructor(private puzzleStateService: PuzzleStateService, private puzzleLibraryService: PuzzleLibraryService) {
+    const puzzle = this.puzzleLibraryService.getPuzzle()
     const state = puzzleStateService.getState().value;
-    this.display = state.grid.squares.map(row => row.map(square => {
-      return {
-        location: square.location,
-        value: square.value,
-        wordNumber: null,
-        state: DisplayState.REGULAR
-      };
-    }));
-    this.acrossClues = [];
-    this.downClues = [];
-    this.currentWord = new BehaviorSubject<CurrentWord | null>(null);
+    this.display = this.puzzleToDisplay(puzzle);
     this.refreshDisplayFromState(state);
     this.subscriptions.add(this.puzzleStateService.getState().subscribe({
       next: s => {
@@ -120,135 +104,186 @@ export class DisplayStateService implements OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  private refreshDisplayFromState(state: PuzzleState): void {
-    this.rows = state.grid.rows;
-    this.columns = state.grid.columns;
-    this.wordInfo = state.makeWordInfo();
-    this.display.forEach(row => row.forEach(square => {
-      square.value = state.grid.squares[square.location.row][square.location.column].value;
-      square.wordNumber = null;
+  private puzzleToDisplay(puzzle: Puzzle): Display {
+    const values = new Map<ValueLabel, LinkedValue>();
+    const displayClues = [];
+    for (const [index, clue] of puzzle.clues.entries()) {
+      displayClues.push({
+        group: index + 1,
+        hint: clue.hint,
+        label: clue.label,
+        squares: clue.mapping.map((v, i) => {
+          const value = {
+            mapping: v,
+            label: clue.label,
+            state: DisplayState.REGULAR,
+            value: ''
+          }
+          values.set(v, value);
+          return {
+            group: index,
+            index: i,
+            value: value,
+            focused: false
+          }
+        })
+      })
+    }
+    const displayAuthor = {
+      group: -1,
+      squares: displayClues.map(c => { return c.squares[0] })
+    }
+    const squareMap = new Map<ValueLabel, GridSquare>();
+    const grid = puzzle.grid.grid.map((row: readonly (Square | null)[], j) => row.map((square: (Square | null), i) => {
+      const gridSquare = {
+        location: {
+          row: j,
+          column: i,
+        },
+        value: square != null ? values.get(square.mapping)! : null,
+        focused: false,
+      };
+      if (square != null) {
+        squareMap.set(square.mapping, gridSquare);
+      }
+      return gridSquare
     }));
-    this.wordInfo.acrossWords.forEach(w => {
-      this.display[w.cursor.location.row][w.cursor.location.column].wordNumber = w.index;
-    });
-    this.wordInfo.downWords.forEach(w => {
-      this.display[w.cursor.location.row][w.cursor.location.column].wordNumber = w.index;
-    });
+    return {
+      grid: {
+        rows: puzzle.grid.height,
+        columns: puzzle.grid.width,
+        display: grid,
+        valueToSquare: squareMap,
+      },
+      author: displayAuthor,
+      clues: displayClues,
+    }
+  }
 
-    this.acrossClues = wordsToDisplayClues(
-      this.wordInfo.acrossWords.values()).sort((a, b) => a.index - b.index);
-    this.downClues = wordsToDisplayClues(
-      this.wordInfo.downWords.values()).sort((a, b) => a.index - b.index);
-
+  private refreshDisplayFromState(state: FillState): void {
+    state.mapping.forEach((v, k) => {
+      this.display.grid.valueToSquare.get(k)!.value!.value = v;
+    });
     this.updateDisplayHighlighting(state.cursor);
   }
 
 
   private updateDisplayHighlighting(cursor: Cursor): void {
     this.cursor = cursor;
-    this.display.forEach(row => row.forEach(square => {
-      square.state = DisplayState.REGULAR;
-    }));
-    const acrossWordNum = this.wordInfo.acrossGrid[cursor.location.row][cursor.location.column];
-    const downWordNum = this.wordInfo.downGrid[cursor.location.row][cursor.location.column];
+    this.display.grid.display.forEach(row => row.forEach(square => {
+      square.focused = false;
+    }))
+    this.display.author.squares.forEach(square => {
+      square.focused = false;
+    })
+    this.display.clues.forEach(clue => clue.squares.forEach(square => {
+      square.focused = false;
+    }))
 
-    let nextWord: CurrentWord | null = null;
-    if (acrossWordNum != null && downWordNum != null) {
-      const acrossWord = this.wordInfo.acrossWords.get(acrossWordNum.word);
-      const downWord = this.wordInfo.downWords.get(downWordNum.word);
-      if (acrossWord === undefined || downWord === undefined) {
-        throw Error('internal state broken');
-      }
-      const focus = cursor.orientation === Orientation.ACROSS ? acrossWord : downWord;
-      focus.squares.forEach(s => {
-        this.display[s.location.row][s.location.column].state = DisplayState.HIGHLIGHTED;
-      });
-      nextWord = {
-        cursor: focus.cursor,
-        across: wordToDisplay(acrossWord, acrossWordNum),
-        down: wordToDisplay(downWord, downWordNum),
-      };
+    if (cursor.label == -2) {
+      const location = toLocation(cursor.value);
+      const square = this.display.grid.display[location.row][location.column];
+      square.focused = true;
+    } else if (cursor.label == -1) {
+      const square = this.display.author.squares[cursor.value];
+      square.focused = true;
+    } else {
+      const square = this.display.clues[cursor.label].squares[cursor.value];
+      square.focused = true;
     }
-    const focusCursor = nextWord !== null ? nextWord.cursor : null;
-    this.acrossClues.forEach(c => { c.focus = cursorEqual(c.cursor, focusCursor); });
-    this.downClues.forEach(c => { c.focus = cursorEqual(c.cursor, focusCursor); });
-    this.display[cursor.location.row][cursor.location.column].state = DisplayState.FOCUS;
-    this.currentWord.next(nextWord);
   }
 
-  private currentSquare(): Square {
-    return this.display[this.cursor.location.row][this.cursor.location.column];
+  getDisplay(): GridSquare[][] {
+    return this.display.grid.display;
   }
 
-  getDisplay(): DisplaySquare[][] {
-    return this.display;
+  getClues(): DisplayClue[] {
+    return this.display.clues;
   }
 
-  getAcrossClues(): DisplayClue[] {
-    return this.acrossClues;
-  }
-
-  getDownClues(): DisplayClue[] {
-    return this.downClues;
-  }
-
-  getCurrentWord(): Observable<CurrentWord | null> {
-    return this.currentWord;
+  getAuthor(): DisplayAuthor {
+    return this.display.author
   }
 
   moveAcross(step: number): void {
     const cursor = this.cursor;
-    let column = cursor.location.column;
-    if (this.currentSquare().value == null || cursor.orientation === Orientation.ACROSS) {
-      if (column + step >= 0 && column + step < this.columns) {
-        column += step;
+    if (cursor.label == -2) {
+      const location = toLocation(cursor.value);
+      const newLocation = {
+        row: location.row,
+        column: clamp(0, location.column + step, this.display.grid.columns - 1),
       }
-    }
-    this.updateDisplayHighlighting({
-      location: { row: cursor.location.row, column },
-      orientation: Orientation.ACROSS
-    });
-  }
-
-  moveCursorToSquareOrToggle(location: Location): void {
-    let cursor = this.cursor;
-    if (location === cursor.location) {
-      cursor = {
-        location: cursor.location,
-        orientation: switchOrientation(cursor.orientation)
-      };
+      this.updateDisplayHighlighting({
+        label: cursor.label,
+        value: toGroupIndex(newLocation),
+      });
+    } else if (cursor.label == -1) {
+      this.updateDisplayHighlighting({
+        label: cursor.label,
+        value: clamp(0, cursor.value + step, this.display.author.squares.length - 1)
+      });
     } else {
-      cursor = { location, orientation: cursor.orientation };
+      const clue = this.display.clues[cursor.label]
+      this.updateDisplayHighlighting({
+        label: cursor.label,
+        value: clamp(0, cursor.value + step, clue.squares.length - 1)
+      });
     }
-    this.updateDisplayHighlighting(cursor);
   }
 
-  moveCursor(cursor: Cursor): void {
-    this.updateDisplayHighlighting(cursor);
+  moveToGridSquare(square: GridSquare): void {
+    this.updateDisplayHighlighting({
+      label: -2,
+      value: toGroupIndex(square.location),
+    })
+  }
+
+  moveToWordSquare(square: WordSquare): void {
+    this.updateDisplayHighlighting({
+      label: square.group,
+      value: square.index,
+    })
   }
 
   moveDown(step: number): void {
     const cursor = this.cursor;
-    let row = cursor.location.row;
-    if (this.currentSquare().value == null || cursor.orientation === Orientation.DOWN) {
-      if (row + step >= 0 && row + step < this.rows) {
-        row += step;
+    if (cursor.label == -2) {
+      const location = toLocation(cursor.value);
+      const newLocation = {
+        row: clamp(0, location.row + step, this.display.grid.rows - 1),
+        column: location.column
       }
-    }
-    this.updateDisplayHighlighting({
-      location: { row, column: cursor.location.column },
-      orientation: Orientation.DOWN
-    });
+      this.updateDisplayHighlighting({
+        label: cursor.label,
+        value: toGroupIndex(newLocation),
+      });
+    } 
   }
 
-  mutateAndStep(value: Value, step: number): void {
+  mutateAndStep(value: string, step: number): void {
     const cursor = this.cursor;
-    this.puzzleStateService.setSquare(cursor, value);
-    if (cursor.orientation === Orientation.ACROSS) {
+    if (cursor.label == -2) {
+      const location = toLocation(cursor.value);
+      const square = this.display.grid.display[location.row][location.column];
+      if (square.value == null) {
+        return;
+      }
+      square.value.value = value;
+      const nextSquare = this.display.grid.valueToSquare.get(square.value.mapping + step);
+      if (nextSquare == undefined) {
+        return;
+      }
+      return this.updateDisplayHighlighting({
+        label: cursor.label,
+        value: toGroupIndex(nextSquare.location),
+      });
+    } else if (cursor.label == -1) {
+      this.display.author.squares[cursor.value].value.value = value;
       this.moveAcross(step);
-    }
-    if (cursor.orientation === Orientation.DOWN) {
-      this.moveDown(step);
+    } else {
+      const clue = this.display.clues[cursor.label]
+      clue.squares[cursor.value].value.value = value;
+      this.moveAcross(step);
     }
   }
 }

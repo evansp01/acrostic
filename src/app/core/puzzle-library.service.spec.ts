@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DictionaryService } from './dictionary.service';
+import { PuzzleLibraryService } from './puzzle-library.service';
 
-describe('DictionaryService', () => {
-  let service: DictionaryService;
+describe('PuzzleLibraryService', () => {
+  let service: PuzzleLibraryService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(DictionaryService);
+    service = TestBed.inject(PuzzleLibraryService);
   });
 
   it('should be created', () => {

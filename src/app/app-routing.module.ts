@@ -2,12 +2,7 @@ import { NgModule } from '@angular/core';
 import { ActivatedRouteSnapshot, DetachedRouteHandle, RouterModule, Routes } from '@angular/router';
 import { RedirectComponent } from './redirect.component';
 import { CrosswordComponent } from './crossword/crossword.component';
-
 import { RouteReuseStrategy } from '@angular/router';
-import { MetadataComponent } from './metadata/metadata.component';
-import { WordSuggestionComponent } from './word-suggestion/word-suggestion.component';
-import { CluesComponent } from './clues/clues.component';
-import { DictionarySearchComponent } from './dictionary-search/dictionary-search.component';
 
 export class NeverReuseRoutesStrategy implements RouteReuseStrategy {
   shouldDetach(route: ActivatedRouteSnapshot): boolean {
@@ -30,12 +25,7 @@ const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/puzzle' },
   { path: 'puzzle', pathMatch: 'full', component: RedirectComponent },
   {
-    path: 'puzzle/:id', component: CrosswordComponent, children: [
-      { path: 'fill', component: WordSuggestionComponent },
-      { path: 'clues', component: CluesComponent },
-      { path: 'info', component: MetadataComponent },
-      { path: 'search', component: DictionarySearchComponent },
-    ]
+    path: 'puzzle/:id', component: CrosswordComponent
   }
 ];
 

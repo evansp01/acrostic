@@ -1,27 +1,28 @@
-<svg id="crossword" viewBox="0 0 602 602" xmlns="http://www.w3.org/2000/svg" (focus)="1" (keydown)="onKeyPress($event)"
+<svg id="crossword" [attr.viewBox]="getViewBox()" xmlns="http://www.w3.org/2000/svg" (focus)="1"
+  (keydown)="onKeyPress($event)"
   focusable="true" tabindex="0" preserveAspectRatio="xMidYMin meet">
   <ng-container *ngFor="let row of grid.getDisplay()">
     <ng-container *ngFor="let square of row">
-      <rect (click)="clicked(square)" *ngIf="square.value == null && square.state == displayState.REGULAR"
-        class="blackbox" [attr.x]="1 + square.location.column * 40" [attr.y]="1 + square.location.row * 40" width="40"
-        height="40" style="stroke-width: 1; stroke: rgb(55,55,55); fill:rgb(0,0,0);"></rect>
-      <rect (click)="clicked(square)" *ngIf="square.value == null && square.state == displayState.FOCUS"
-        class="blackbox" [attr.x]="1 + square.location.column * 40" [attr.y]="1 + square.location.row * 40" width="40"
-        height="40" style="stroke-width: 1; stroke: rgb(55,55,55); fill:rgb(90, 30, 90);"></rect>
-      <rect (click)="clicked(square)" *ngIf="square.value != null && square.state == displayState.REGULAR"
+      <rect (click)="gridClicked(square)"
         [attr.x]="1 + square.location.column * 40" [attr.y]="1 + square.location.row * 40" width="40" height="40"
-        style="fill: rgb(255,255,255); stroke-width: 1; stroke: rgb(55,55,55);"></rect>
-      <rect (click)="clicked(square)" *ngIf="square.value != null && square.state == displayState.FOCUS"
-        [attr.x]="1 + square.location.column * 40" [attr.y]="1 + square.location.row * 40" width="40" height="40"
-        style="fill: rgb(241,245,130); stroke-width: 1; stroke: rgb(55,55,55);"></rect>
-      <rect (click)="clicked(square)" *ngIf="square.value != null && square.state == displayState.HIGHLIGHTED"
-        [attr.x]="1 + square.location.column * 40" [attr.y]="1 + square.location.row * 40" width="40" height="40"
-        style="fill: rgb(153,204,205); stroke-width: 1; stroke: rgb(55,55,55);"></rect>
-      <text (click)="clicked(square)" *ngIf="square.value != null" class="inputText"
-        [attr.x]="square.location.column * 40 + 19" [attr.y]="square.location.row * 40 + 35" text-anchor="middle"
-        style="fill: black; font-size: 30px;">{{square.value}}</text>
-      <text (click)="clicked(square)" *ngIf="square.value != null" [attr.x]="4 + square.location.column * 40"
-        [attr.y]="12 + square.location.row*40" style="fill: black; font-size: 10px;">{{square.wordNumber}}</text>
+        [style]="getSquareStyle(square)"></rect>   
+      <text (click)="gridClicked(square)" *ngIf="square.value != null" class="inputText"
+        [attr.x]="square.location.column * 40 + 20" [attr.y]="square.location.row * 40 + 37" text-anchor="middle"
+        style="fill: black; font-size: 30px;">{{square.value.value}}</text>
+      <text (click)="gridClicked(square)" *ngIf="square.value != null" [attr.x]="4 + square.location.column * 40"
+        [attr.y]="12 + square.location.row * 40" style="fill: black; font-size: 10px;">{{displayLabel(square.value.label)}}</text>
+      <text (click)="gridClicked(square)" text-anchor="end" *ngIf="square.value != null" [attr.x]="36 + square.location.column * 40"
+        [attr.y]="12 + square.location.row * 40" style="fill: black; font-size: 10px;">{{square.value.mapping}}</text>
     </ng-container>
   </ng-container>
 </svg>
+<div class="puzzle-container">
+  <div class="clue-container" *ngFor="let clue of grid.getClues()">
+    <p class="clue">{{clue.hint}}</p>
+    <div class="answer">
+      <div class="letter-box" *ngFor="let square of clue.squares"><span>{{square.value.value}}</span><span
+          class="letter-number">{{square.value.mapping}}</span>
+      </div>
+    </div>
+  </div>
+</div>

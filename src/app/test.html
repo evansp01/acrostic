@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptic Acrostic Puzzle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.4;
+        }
+
+        .clue-container {
+            margin-bottom: 12px;
+        }
+
+        .clue {
+            font-weight: bold;
+            margin-bottom: 0px;
+            font-size: 14px;
+        }
+
+        .answer {
+            display: flex;
+        }
+
+        .letter-box {
+            width: 22px;
+            height: 24px;
+            border-bottom: 1px solid #000;
+            margin-right: 2px;
+            position: relative;
+            text-align: center;
+            font-size: 16px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .letter-box span {
+            line-height: 1;
+            margin-bottom: 1px;
+        }
+
+        .letter-number {
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: #666;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="clue-container">
+        <p class="clue">Adam's wife</p>
+        <div class="answer">
+            <div class="letter-box">
+                <span>E</span>
+                <span class="letter-number">1</span>
+            </div>
+            <div class="letter-box">
+                <span>V</span>
+                <span class="letter-number">2</span>
+            </div>
+            <div class="letter-box">
+                <span>E</span>
+                <span class="letter-number">3</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="clue-container">
+        <p class="clue">Ancient Mesopotamian city, capital of Sumer</p>
+        <div class="answer">
+            <div class="letter-box">
+                <span>U</span>
+                <span class="letter-number">4</span>
+            </div>
+            <div class="letter-box">
+                <span>R</span>
+                <span class="letter-number">5</span>
+            </div>
+            <div class="letter-box">
+                <span></span>
+                <span class="letter-number">6</span>
+            </div>
+            <div class="letter-box">
+                <span></span>
+                <span class="letter-number">7</span>
+            </div>
+            <div class="letter-box">
+                <span></span>
+                <span class="letter-number">8</span>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,20 +1,9 @@
 <nav class="navbar navbar-light bg-light pb-0 pt-1 row no-gutters">
     <div class="col-sm d-flex flex-row primary-column">
-        <a class="navbar-brand" href="#">Cross</a>
+        <a class="navbar-brand" href="#">Acrostic</a>
         <button type="button" class="btn btn-default navbar-btn shadow-none" [routerLink]="['/puzzle']">New</button>
         <input type="file" #fileupload (change)="handleFileInput($event)" hidden>
         <button type="button" class="btn btn-default navbar-btn shadow-none"
             (click)="fileupload.click()">Import</button>
-        <button type="button" class="btn btn-default navbar-btn shadow-none" (click)=saveToFile()>Export</button>
-        <input type="file" accept=".txt" #dictupload (change)="handleDictUpload($event)" hidden>
-        <button type="button" class="btn btn-default navbar-btn shadow-none"
-            (click)="dictupload.click()">Dictionary</button>
-    </div>
-    <div class="col-sm d-flex flex-row primary-column">
-        <ul class="nav nav-tabs mr-auto">
-            <li class="nav-item" *ngFor="let tab of tabs">
-                <a class="nav-link" routerLink="./{{tab.link}}" routerLinkActive="active">{{tab.title}}</a>
-            </li>
-        </ul>
     </div>
 </nav>

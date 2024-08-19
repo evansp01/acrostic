@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { PuzzleState, PuzzleStateService } from './puzzle-state.service';
-import { SerializationService } from './serialization.service';
+import { FillState, PuzzleStateService } from './puzzle-state.service';
 
 interface StorageItem {
-  blob: string;
+  state: FillState;
   time: number;
 }
 
@@ -20,13 +19,8 @@ function stringToStorageItem(json: string | null): StorageItem | null {
 }
 
 export class LocalStateStore {
-  private key: string;
-  private serializationService: SerializationService;
 
-  constructor(serializationService: SerializationService, key: string) {
-    this.serializationService = serializationService;
-    this.key = key;
-  }
+  constructor(private key: string) { }
 
   attach(puzzleState: PuzzleStateService): Subscription {
     const existing = this.locateState();
@@ -38,18 +32,15 @@ export class LocalStateStore {
     });
   }
 
-  saveState(state: PuzzleState): void {
-    const encoded = Buffer.from(this.serializationService.puzFromPuzzleState(state)).toString('base64');
-    const item: StorageItem = { blob: encoded, time: Date.now() };
+  saveState(state: FillState): void {
+    const item: StorageItem = { state: state, time: Date.now() };
     localStorage.setItem(this.key, JSON.stringify(item));
   }
 
-  locateState(): PuzzleState | null {
+  locateState(): FillState | null {
     const item = stringToStorageItem(localStorage.getItem(this.key));
-    if (item === null) {
-      return null;
-    }
-    return this.serializationService.puzzleStateFromPuz(Buffer.from(item.blob, 'base64'));
+    if (item == null) return null;
+    return item.state;
   }
 }
 
@@ -58,15 +49,13 @@ export class LocalStateStore {
 })
 export class LocalStateStoreService {
   private static daysToMillis = 24 * 60 * 60 * 1000;
-  private serializationService: SerializationService;
 
-  constructor(serializationService: SerializationService) {
-    this.serializationService = serializationService;
+  constructor() {
     this.pruneOldObjects();
   }
 
   makeStateStore(key: string): LocalStateStore {
-    return new LocalStateStore(this.serializationService, key);
+    return new LocalStateStore(key);
   }
 
   private pruneOldObjects(): void {

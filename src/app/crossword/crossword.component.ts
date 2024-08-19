@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DisplayStateService } from '../core/display-state.service';
 import { LocalStateStore, LocalStateStoreService } from '../core/local-state-store.service';
-import { PuzzleState, PuzzleStateService } from '../core/puzzle-state.service';
+import { FillState, PuzzleStateService } from '../core/puzzle-state.service';
 
 @Component({
   selector: 'app-crossword',
@@ -39,7 +39,7 @@ export class CrosswordComponent implements OnInit, OnDestroy, AfterViewInit {
         this.subscriptions.remove(subscription);
         subscription.unsubscribe();
       }
-      this.puzzleState.setState(PuzzleState.newState(15));
+      this.puzzleState.setState(new FillState());
       const storage = this.localStore.makeStateStore(id);
       subscription = storage.attach(this.puzzleState);
       this.subscriptions.add(subscription);
