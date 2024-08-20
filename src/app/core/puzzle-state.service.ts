@@ -11,12 +11,26 @@ export interface Cursor {
 }
 
 export class FillState {
-  public readonly cursor: Cursor
-  public readonly mapping: Map<ValueLabel, string>;
 
-  public constructor() {
-    this.cursor = { label: 0, value: 0 };
-    this.mapping = new Map<ValueLabel, string>;
+  public constructor(
+    public readonly cursor: Cursor,
+    public readonly mapping: Map<ValueLabel, string>) {
+  }
+
+  static Empty(): FillState {
+    return new FillState({ label: 0, value: 0 }, new Map<ValueLabel, string>())
+  }
+
+  serialize(): string {
+    return JSON.stringify({
+      cursor: this.cursor,
+      mapping: Array.from(this.mapping.entries()),
+    })
+  }
+
+  static deserialize(json: string): FillState {
+    const item = JSON.parse(json);
+    return new FillState(item.cursor, new Map<ValueLabel, string>(item.mapping));
   }
 }
 
@@ -30,7 +44,7 @@ export class PuzzleStateService {
   private state: BehaviorSubject<FillState>;
 
   constructor() {
-    this.state = new BehaviorSubject(new FillState());
+    this.state = new BehaviorSubject(FillState.Empty());
     this.past = [];
     this.future = [];
   }
@@ -53,10 +67,10 @@ export class PuzzleStateService {
       mapping.set(k, v);
     })
     mapping.set(label, value);
-    return this.setState({
-      cursor: cursor,
-      mapping: mapping,
-    });
+    return this.setState(new FillState(
+      cursor,
+      mapping,
+    ));
   }
 
   clearValue(cursor: Cursor, label: number): FillState {
@@ -66,10 +80,8 @@ export class PuzzleStateService {
       mapping.set(k, v);
     })
     mapping.delete(label);
-    return this.setState({
-      cursor: cursor,
-      mapping: mapping,
-    })
+    return this.setState(new FillState(cursor, mapping)
+    )
   }
 
   undo(): void {

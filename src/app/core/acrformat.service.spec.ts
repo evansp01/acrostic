@@ -1,9 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-
 import { AcrFormatService } from './acrformat.service';
 
-
-var exampleFile = `! This file made by Acrostic 3.0 program. DO NOT EDIT!
+const exampleFile = `! This file made by Acrostic 3.0 program. DO NOT EDIT!
 [QUOTE]
 Richard Sauder@Commentary@Yes, America has become a rogue state, a state that unleashes unprovoked warfare on other peoples and other nations. America has become a threat to the security of planet Earth and to the life and liberty of a growing number of its own citizens.
 [GRID]
@@ -46,7 +44,7 @@ BERTY#OF#A#GROWING#NUMBER
 [byline]
 by Billym
 [lastfile]
-C:\!!delphi\Acrostic3\samplepuzzle1.txt
+C:\\!!delphi\\Acrostic3\\samplepuzzle1.txt
 [loadlastfile]
 TRUE
 [NUMPROBLEMS]

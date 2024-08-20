@@ -1,7 +1,42 @@
 #crossword {
-    width:100%;
-    height:100%;
+    width: 700px;
+    height: 100%;
 }
+
+.grid-square {
+    stroke-width: 1;
+    stroke: rgb(55, 55, 55);
+}
+
+.black-square-focused {
+    fill: rgb(90, 30, 90);
+}
+
+.black-square {
+    fill: rgb(0, 0, 0);
+
+}
+
+.white-square {
+    fill: rgb(255, 255, 255);
+
+}
+
+.white-square-highlighted {
+    fill: rgb(153, 204, 205);
+
+}
+
+.white-square-focused {
+    fill: rgb(241, 245, 130);
+}
+
+.square-label,
+.square-number {
+    fill: black;
+    font-size: 10px;
+}
+
 .puzzle-container {
     font-family: Arial, sans-serif;
     line-height: 1.4;
@@ -34,6 +69,14 @@
     justify-content: center;
 }
 
+.letter-box-highlighted {
+    fill: rgb(153, 204, 205);
+}
+
+.letter-box-focused {
+    fill: rgb(241, 245, 130);
+}
+
 .letter-box span {
     line-height: 1;
     margin-bottom: 1px;
@@ -47,7 +90,4 @@
     font-size: 9px;
     color: #666;
     user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
 }

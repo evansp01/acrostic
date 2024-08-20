@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DisplayStateService } from '../core/display-state.service';
-import { LocalStateStore, LocalStateStoreService } from '../core/local-state-store.service';
+import { LocalStateStoreService } from '../core/local-state-store.service';
 import { FillState, PuzzleStateService } from '../core/puzzle-state.service';
 
 @Component({
@@ -39,7 +39,7 @@ export class CrosswordComponent implements OnInit, OnDestroy, AfterViewInit {
         this.subscriptions.remove(subscription);
         subscription.unsubscribe();
       }
-      this.puzzleState.setState(new FillState());
+      this.puzzleState.setState(FillState.Empty());
       const storage = this.localStore.makeStateStore(id);
       subscription = storage.attach(this.puzzleState);
       this.subscriptions.add(subscription);

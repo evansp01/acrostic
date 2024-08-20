@@ -1,5 +1,4 @@
-import { Injectable, numberAttribute } from '@angular/core';
-import { __values } from 'tslib';
+import { Injectable } from '@angular/core';
 
 const _START_SECTION = '!start';
 
@@ -51,19 +50,16 @@ export class AcrFormatService {
   }
 
   private parseSections(file: string): Map<string, string[]> {
-    let lineNum = 0;
     const sections = new Map<string, string[]>()
 
     let currentSection: string[] = []
     sections.set(_START_SECTION, currentSection)
-    for (var split of file.split(/\r?\n/)) {
-      lineNum++;
+    for (const  split of file.split(/\r?\n/)) {
       const trimmed = split.trim();
       if (trimmed == "") {
         continue;
       }
-      const line = { number: lineNum, contents: split }
-      let [sectionTitle, ok] = this.parseSection(trimmed)
+      const [sectionTitle, ok] = this.parseSection(trimmed)
       if (ok) {
         currentSection = []
         sections.set(sectionTitle, currentSection)
@@ -130,7 +126,7 @@ export class AcrFormatService {
   private parseGrid(lines: string[], squares: Map<ValueLabel, Square>): Grid {
     const height = lines.length;
     const width = lines[0].length;
-    let grid: Array<Array<Square | null>> = [];
+    const grid: Array<Array<Square | null>> = [];
     let mapping: ValueLabel = 1;
     for (let j = 0; j < lines.length; j++) {
       const line = lines[j];

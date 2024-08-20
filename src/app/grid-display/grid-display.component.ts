@@ -27,6 +27,7 @@ export class GridDisplayComponent implements OnInit {
   }
 
   wordClicked(square: WordSquare): void {
+    console.log("word-clicked" + square);
     this.grid.moveToWordSquare(square);
   }
 
@@ -41,28 +42,43 @@ export class GridDisplayComponent implements OnInit {
     return String.fromCharCode('A'.charCodeAt(0) + l)
   }
 
-  getSquareStyle(square: GridSquare): string {
+  getSquareClass(square: GridSquare): string {
+    console.log('square class call')
     if (square.value == null) {
       if (square.focused) {
-        return "stroke-width: 1; stroke: rgb(55,55,55); fill:rgb(90, 30, 90);"
+        return "grid-square black-square-focused"
       } else {
-        return "stroke-width: 1; stroke: rgb(55,55,55); fill:rgb(0,0,0);"
+        return "grid-square black-square"
       }
     }
     if (square.focused) {
-      return "fill: rgb(241,245,130); stroke-width: 1; stroke: rgb(55,55,55);"
+      return "grid-square white-square-focused"
     }
-    if (square.value.state == this.displayState.REGULAR) {
-      return "fill: rgb(255,255,255); stroke-width: 1; stroke: rgb(55,55,55);"
+    switch(square.value.state) {
+      case this.displayState.REGULAR:
+        return "grid-square white-square";
+      case this.displayState.HIGHLIGHTED:
+        return "grid-square white-square-highlighted"
     }
-    if (square.value.state == this.displayState.HIGHLIGHTED) {
-      return "fill: rgb(153,204,205); stroke-width: 1; stroke: rgb(55,55,55);"
+  }
+
+  getWordClass(square: WordSquare): string {
+    console.log('word class call')
+    if (square.focused) {
+      console.log('found focused word')
+      return "letter-box letter-box-focused"
+    } 
+    switch(square.value.state) {
+      case this.displayState.REGULAR:
+        return "letter-box"
+      case this.displayState.HIGHLIGHTED:
+        return "letter-box letter-box-highlighted"
     }
-    return "";
   }
 
   // @HostListener('window:keydown', ['$event'])
   onKeyPress(event: KeyboardEvent): void {
+    console.log('keypress ' + event)
     if (event.ctrlKey || event.metaKey) {
       switch (event.key) {
         case 'z':
@@ -102,6 +118,12 @@ export class GridDisplayComponent implements OnInit {
         return;
       case 'Tab':
         // handle tab
+        if (event.shiftKey) {
+          this.grid.moveGroup(-1)
+        } else {
+          this.grid.moveGroup(1)
+        }
+        event.preventDefault();
         return;
       case 'Enter':
         return;

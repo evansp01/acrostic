@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { FillState, PuzzleStateService } from './puzzle-state.service';
+import {FillState, PuzzleStateService } from './puzzle-state.service';
 
 interface StorageItem {
-  state: FillState;
+  state: string;
   time: number;
 }
 
@@ -24,7 +24,8 @@ export class LocalStateStore {
 
   attach(puzzleState: PuzzleStateService): Subscription {
     const existing = this.locateState();
-    if (existing) {
+    if (existing != null) {
+      console.log(existing)
       puzzleState.setState(existing);
     }
     return puzzleState.getState().subscribe(s => {
@@ -33,14 +34,14 @@ export class LocalStateStore {
   }
 
   saveState(state: FillState): void {
-    const item: StorageItem = { state: state, time: Date.now() };
+    const item: StorageItem = { state: state.serialize(), time: Date.now() };
     localStorage.setItem(this.key, JSON.stringify(item));
   }
 
   locateState(): FillState | null {
     const item = stringToStorageItem(localStorage.getItem(this.key));
     if (item == null) return null;
-    return item.state;
+    return FillState.deserialize(item.state)
   }
 }
 

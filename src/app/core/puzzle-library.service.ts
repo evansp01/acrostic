@@ -1,5 +1,4 @@
-import { Injectable, numberAttribute } from '@angular/core';
-import { __values } from 'tslib';
+import { Injectable} from '@angular/core';
 import { AcrFormatService, Puzzle } from './acrformat.service';
 
 const PUZZLE = `! This file made by Acrostic 3.0 program. DO NOT EDIT!
@@ -45,7 +44,7 @@ BERTY#OF#A#GROWING#NUMBER
 [byline]
 by Billym
 [lastfile]
-C:\!!delphi\Acrostic3\samplepuzzle1.txt
+C:\\!!delphi\\Acrostic3\\samplepuzzle1.txt
 [loadlastfile]
 TRUE
 [NUMPROBLEMS]

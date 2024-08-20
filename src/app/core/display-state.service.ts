@@ -1,6 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, max, Observable, Subscription } from 'rxjs';
-import { CrosswordComponent } from '../crossword/crossword.component';
+import {  Subscription } from 'rxjs';
 import { Cursor, PuzzleStateService, ValueLabel, Group, GroupIndex, FillState } from './puzzle-state.service';
 import { Square, Puzzle } from './acrformat.service';
 import { PuzzleLibraryService } from './puzzle-library.service';
@@ -161,6 +160,10 @@ export class DisplayStateService implements OnDestroy {
   }
 
   private refreshDisplayFromState(state: FillState): void {
+    console.log(state.mapping)
+    this.display.grid.valueToSquare.forEach((v,k) => {
+      v.value!.value = state.mapping.get(k) ?? ''
+    })
     state.mapping.forEach((v, k) => {
       this.display.grid.valueToSquare.get(k)!.value!.value = v;
     });
@@ -188,7 +191,9 @@ export class DisplayStateService implements OnDestroy {
       const square = this.display.author.squares[cursor.value];
       square.focused = true;
     } else {
+      console.log('receiving focus')
       const square = this.display.clues[cursor.label].squares[cursor.value];
+      console.log(`${cursor.label} ${cursor.value}`)
       square.focused = true;
     }
   }
@@ -257,10 +262,20 @@ export class DisplayStateService implements OnDestroy {
         label: cursor.label,
         value: toGroupIndex(newLocation),
       });
-    } 
+    }
+  }
+
+  moveGroup(step: number): void {
+    const cursor = this.cursor
+    const newGroup = ((2 + cursor.label + step) % (2 + this.display.clues.length)) - 2
+    this.updateDisplayHighlighting({
+      label: newGroup,
+      value: 0,
+    })
   }
 
   mutateAndStep(value: string, step: number): void {
+    console.log('here')
     const cursor = this.cursor;
     if (cursor.label == -2) {
       const location = toLocation(cursor.value);
@@ -281,6 +296,7 @@ export class DisplayStateService implements OnDestroy {
       this.display.author.squares[cursor.value].value.value = value;
       this.moveAcross(step);
     } else {
+      console.log('here')
       const clue = this.display.clues[cursor.label]
       clue.squares[cursor.value].value.value = value;
       this.moveAcross(step);
