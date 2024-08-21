@@ -84,7 +84,6 @@ function clamp(min: number, x: number, max: number) {
 export class DisplayStateService implements OnDestroy {
   private subscriptions = new Subscription();
   private display: Display;
-
   private cursor!: Cursor;
 
   constructor(private puzzleStateService: PuzzleStateService, private puzzleLibraryService: PuzzleLibraryService) {
@@ -160,7 +159,6 @@ export class DisplayStateService implements OnDestroy {
   }
 
   private refreshDisplayFromState(state: FillState): void {
-    console.log(state.mapping)
     this.display.grid.valueToSquare.forEach((v,k) => {
       v.value!.value = state.mapping.get(k) ?? ''
     })
@@ -191,9 +189,7 @@ export class DisplayStateService implements OnDestroy {
       const square = this.display.author.squares[cursor.value];
       square.focused = true;
     } else {
-      console.log('receiving focus')
       const square = this.display.clues[cursor.label].squares[cursor.value];
-      console.log(`${cursor.label} ${cursor.value}`)
       square.focused = true;
     }
   }
@@ -275,7 +271,6 @@ export class DisplayStateService implements OnDestroy {
   }
 
   mutateAndStep(value: string, step: number): void {
-    console.log('here')
     const cursor = this.cursor;
     if (cursor.label == -2) {
       const location = toLocation(cursor.value);
@@ -296,7 +291,6 @@ export class DisplayStateService implements OnDestroy {
       this.display.author.squares[cursor.value].value.value = value;
       this.moveAcross(step);
     } else {
-      console.log('here')
       const clue = this.display.clues[cursor.label]
       clue.squares[cursor.value].value.value = value;
       this.moveAcross(step);

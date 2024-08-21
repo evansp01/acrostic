@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { AcrFormatService, Puzzle, Clue, Grid } from './acrformat.service';
+import {  Puzzle } from './acrformat.service';
 import { Liquid } from 'liquidjs';
 import { HttpClient } from '@angular/common/http';
-import { RouterLinkWithHref } from '@angular/router';
 
 const _CLUE_ANSWER_MAX_LINE_LENGTH = 14;
 const _AUTHOR_MAX_LINE_LENGTH = 28;

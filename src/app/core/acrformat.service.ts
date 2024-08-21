@@ -5,7 +5,6 @@ const _START_SECTION = '!start';
 export type ValueLabel = number
 export type ClueLabel = number
 
-
 export interface Square {
   readonly label: ClueLabel;
   readonly mapping: ValueLabel;
@@ -24,14 +23,12 @@ export interface Clue {
   mapping: ReadonlyArray<ValueLabel>;
 }
 
-
 export interface Puzzle {
   grid: Grid,
   clues: Clue[],
   title: string,
   author: string,
 }
-
 
 @Injectable({
   providedIn: 'root'
