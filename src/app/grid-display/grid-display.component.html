@@ -21,7 +21,7 @@
       <p class="clue">{{clue.hint}}</p>
       <div class="answer">
         <ng-container *ngFor="let square of clue.squares">
-          <div class="letter-box" (click)="wordClicked(square)">
+          <div [class]="getWordClass(square)" (click)="wordClicked(square)">
             <span class="inputText">{{square.value.value}}</span>
             <span class="letter-number">{{square.value.mapping}}</span>
           </div>

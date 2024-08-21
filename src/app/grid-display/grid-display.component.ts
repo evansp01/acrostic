@@ -27,7 +27,6 @@ export class GridDisplayComponent implements OnInit {
   }
 
   wordClicked(square: WordSquare): void {
-    console.log("word-clicked" + square);
     this.grid.moveToWordSquare(square);
   }
 
@@ -43,7 +42,6 @@ export class GridDisplayComponent implements OnInit {
   }
 
   getSquareClass(square: GridSquare): string {
-    console.log('square class call')
     if (square.value == null) {
       if (square.focused) {
         return "grid-square black-square-focused"
@@ -63,9 +61,7 @@ export class GridDisplayComponent implements OnInit {
   }
 
   getWordClass(square: WordSquare): string {
-    console.log('word class call')
     if (square.focused) {
-      console.log('found focused word')
       return "letter-box letter-box-focused"
     } 
     switch(square.value.state) {
@@ -78,7 +74,6 @@ export class GridDisplayComponent implements OnInit {
 
   // @HostListener('window:keydown', ['$event'])
   onKeyPress(event: KeyboardEvent): void {
-    console.log('keypress ' + event)
     if (event.ctrlKey || event.metaKey) {
       switch (event.key) {
         case 'z':

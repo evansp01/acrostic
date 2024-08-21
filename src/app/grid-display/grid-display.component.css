@@ -19,12 +19,10 @@
 
 .white-square {
     fill: rgb(255, 255, 255);
-
 }
 
 .white-square-highlighted {
     fill: rgb(153, 204, 205);
-
 }
 
 .white-square-focused {
@@ -70,11 +68,11 @@
 }
 
 .letter-box-highlighted {
-    fill: rgb(153, 204, 205);
+    background-color: rgb(153, 204, 205);
 }
 
 .letter-box-focused {
-    fill: rgb(241, 245, 130);
+    background-color: rgb(241, 245, 130);
 }
 
 .letter-box span {
