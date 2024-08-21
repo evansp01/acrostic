@@ -24,9 +24,7 @@ export class NeverReuseRoutesStrategy implements RouteReuseStrategy {
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/puzzle' },
   { path: 'puzzle', pathMatch: 'full', component: RedirectComponent },
-  {
-    path: 'puzzle/:id', component: CrosswordComponent
-  }
+  { path: 'puzzle/:id', component: CrosswordComponent },
 ];
 
 @NgModule({

@@ -168,7 +168,6 @@ export class DisplayStateService implements OnDestroy {
     this.updateDisplayHighlighting(state.cursor);
   }
 
-
   private updateDisplayHighlighting(cursor: Cursor): void {
     this.cursor = cursor;
     this.display.grid.display.forEach(row => row.forEach(square => {
@@ -180,7 +179,6 @@ export class DisplayStateService implements OnDestroy {
     this.display.clues.forEach(clue => clue.squares.forEach(square => {
       square.focused = false;
     }))
-
     if (cursor.label == -2) {
       const location = toLocation(cursor.value);
       const square = this.display.grid.display[location.row][location.column];

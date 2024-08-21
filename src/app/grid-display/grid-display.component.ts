@@ -34,7 +34,6 @@ export class GridDisplayComponent implements OnInit {
     const width = 40 * this.grid.getDisplay().length + 2;
     const height = 40 * this.grid.getDisplay()[0].length + 2;
     return `0 0 ${height} ${width}`
-
   }
 
   displayLabel(l: ClueLabel): string {
