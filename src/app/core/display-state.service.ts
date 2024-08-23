@@ -171,9 +171,6 @@ export class DisplayStateService implements OnDestroy {
     this.display.grid.valueToSquare.forEach((v, k) => {
       v.value!.value = state.mapping.get(k) ?? ''
     })
-    state.mapping.forEach((v, k) => {
-      this.display.grid.valueToSquare.get(k)!.value!.value = v;
-    });
     this.updateDisplayHighlighting(state.cursor);
   }
 
@@ -294,7 +291,7 @@ export class DisplayStateService implements OnDestroy {
       if (square.value == null) {
         return;
       }
-      square.value.value = value;
+      this.puzzleStateService.setValue(cursor, square.value.mapping, value);
       const nextSquare = this.display.grid.valueToSquare.get(square.value.mapping + step);
       if (nextSquare == undefined) {
         return;
@@ -304,11 +301,13 @@ export class DisplayStateService implements OnDestroy {
         value: toGroupIndex(nextSquare.location),
       });
     } else if (cursor.label == -1) {
-      this.display.author.squares[cursor.value].value.value = value;
+      const square  = this.display.author.squares[cursor.value]
+      this.puzzleStateService.setValue(cursor, square.value.mapping, value)
       this.moveAcross(step);
     } else {
       const clue = this.display.clues[cursor.label]
-      clue.squares[cursor.value].value.value = value;
+      const square = clue.squares[cursor.value]
+      this.puzzleStateService.setValue(cursor, square.value.mapping, value)
       this.moveAcross(step);
     }
   }

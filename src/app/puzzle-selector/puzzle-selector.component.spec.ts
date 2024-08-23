@@ -1,20 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CrosswordComponent } from './crossword.component';
+import { PuzzleSelectorComponent } from './puzzle-selector.component';
 
-describe('CrosswordComponent', () => {
-  let component: CrosswordComponent;
-  let fixture: ComponentFixture<CrosswordComponent>;
+describe('PuzzleSelectorComponent', () => {
+  let component: PuzzleSelectorComponent;
+  let fixture: ComponentFixture<PuzzleSelectorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CrosswordComponent ]
+      imports: [PuzzleSelectorComponent]
     })
     .compileComponents();
-  });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(CrosswordComponent);
+    fixture = TestBed.createComponent(PuzzleSelectorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

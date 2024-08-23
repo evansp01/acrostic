@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ClueLabel, DisplayState, DisplayStateService, GridSquare, WordSquare, DisplayClue } from '../core/display-state.service';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { ClueLabel, DisplayState, DisplayStateService, GridSquare, WordSquare } from '../core/display-state.service';
 import { PuzzleStateService } from '../core/puzzle-state.service';
+import { debounceTime } from 'rxjs';
 
 @Component({
   selector: 'app-grid-display',
@@ -20,9 +21,12 @@ export class GridDisplayComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.grid.currentClue.subscribe(l => {
-      const id = this.clueId(l);
-
+    this.grid.currentClue.pipe(debounceTime(300)).subscribe(l => {
+      const elem = document.getElementById(this.clueId(l));
+      elem?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
     })
   }
 
@@ -83,16 +87,18 @@ export class GridDisplayComponent implements OnInit {
     }
   }
 
-  // @HostListener('window:keydown', ['$event'])
+  @HostListener('window:keydown', ['$event'])
   onKeyPress(event: KeyboardEvent): void {
     if (event.ctrlKey || event.metaKey) {
       switch (event.key) {
         case 'z':
         case 'Z':
           if (event.ctrlKey && !event.shiftKey) {
+            console.log('undo')
             this.state.undo();
             event.preventDefault();
           } else if (event.ctrlKey && event.shiftKey) {
+            console.log('redo')
             this.state.redo();
             event.preventDefault();
           }
@@ -146,7 +152,6 @@ export class GridDisplayComponent implements OnInit {
     const code = event.key.charCodeAt(0);
     if (event.key.length === 1 && code >= 32 && code < 127) {
       this.grid.mutateAndStep(event.key.toUpperCase(), 1);
-      // event.preventDefault()
     }
   }
 }

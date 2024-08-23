@@ -8,13 +8,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MenubarComponent } from './menubar/menubar.component';
 import { AppRoutingModule } from './app-routing.module';
-import { CrosswordComponent } from './crossword/crossword.component';
+import { PuzzleSolverComponent } from './puzzle-solver/puzzle-solver.component';
 import { RedirectComponent } from './redirect.component';
 
 @NgModule({
   declarations: [
     AppComponent, GridDisplayComponent,
-    MenubarComponent, CrosswordComponent, RedirectComponent
+    MenubarComponent, PuzzleSolverComponent, RedirectComponent
   ],
   imports: [
     BrowserModule, ScrollingModule, FormsModule, ReactiveFormsModule, BrowserAnimationsModule,

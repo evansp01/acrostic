@@ -6,12 +6,12 @@ import { LocalStateStoreService } from '../core/local-state-store.service';
 import { FillState, PuzzleStateService } from '../core/puzzle-state.service';
 
 @Component({
-  selector: 'app-crossword',
-  templateUrl: './crossword.component.html',
-  styleUrls: ['./crossword.component.css'],
+  selector: 'app-puzzle-solver',
+  templateUrl: './puzzle-solver.component.html',
+  styleUrls: ['./puzzle-solver.component.css'],
   providers: [PuzzleStateService, DisplayStateService]
 })
-export class CrosswordComponent implements OnInit, OnDestroy, AfterViewInit {
+export class PuzzleSolverComponent implements OnInit, OnDestroy, AfterViewInit {
   private subscriptions = new Subscription();
   private route: ActivatedRoute;
   private puzzleState: PuzzleStateService;
