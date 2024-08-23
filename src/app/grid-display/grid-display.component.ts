@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ClueLabel, DisplayState, DisplayStateService, GridSquare, WordSquare } from '../core/display-state.service';
+import { ClueLabel, DisplayState, DisplayStateService, GridSquare, WordSquare, DisplayClue } from '../core/display-state.service';
 import { PuzzleStateService } from '../core/puzzle-state.service';
 
 @Component({
@@ -20,6 +20,14 @@ export class GridDisplayComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.grid.currentClue.subscribe(l => {
+      const id = this.clueId(l);
+
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.grid.currentClue.unsubscribe()
   }
 
   gridClicked(square: GridSquare): void {
@@ -28,6 +36,10 @@ export class GridDisplayComponent implements OnInit {
 
   wordClicked(square: WordSquare): void {
     this.grid.moveToWordSquare(square);
+  }
+
+  clueId(clue: ClueLabel): string {
+    return 'clue' + clue
   }
 
   getViewBox(): string {

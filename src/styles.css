@@ -1,4 +1,27 @@
 /* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .scrollbar-thin {
+      scrollbar-width: thin;  /* Firefox */
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;  /* width of the entire scrollbar */
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: #f1f1f1;  /* color of the tracking area */
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background-color: #888;  /* color of the scroll thumb */
+      border-radius: 20px;  /* roundness of the scroll thumb */
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+      background-color: #555;  /* color of the scroll thumb on hover */
+    }
+  }
+
 
 html, body { height: 100%; }
 body {
@@ -6,41 +29,5 @@ body {
     font-family: "Helvetica Neue", sans-serif;
     font-size: 14px;
 }
-.ql-editor {
-    padding: 0px !important;
-}
-div.tab-content div.tab-pane {
-    height: 100%;
-}
-.primary-column {
-    margin-left: 10px;
-    margin-right: 10px;
-}
-.dictionary-scroll {
-    max-width: 250px;
-}
-
-/* Works on Firefox */
-* {
-    scrollbar-width: thin;
-}
-  
-  /* Works on Chrome, Edge, and Safari */
-* ::-webkit-scrollbar {
-  width: 8px;
-  background-color: #f0f0f0;
-}
-
-::-webkit-scrollbar-thumb {
-  width: 8px;
-  border: 1px solid transparent;
-  background: #cdcdcd;
-  background-clip: content-box;
-}
-
-.nav-tabs { 
-    border-bottom: none;
- }
-  
   
   

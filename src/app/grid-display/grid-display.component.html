@@ -1,32 +1,51 @@
-<div (keydown)="onKeyPress($event)" tabindex="1" (focus)="1" focusable="true">
-  <svg id="crossword" [attr.viewBox]="getViewBox()" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMin meet">
-    <ng-container *ngFor="let row of grid.getDisplay()">
-      <ng-container *ngFor="let square of row">
-        <rect (click)="gridClicked(square)" [attr.x]="1 + square.location.column * 40"
-          [attr.y]="1 + square.location.row * 40" width="40" height="40" [class]="getSquareClass(square)"></rect>
-        <text (click)="gridClicked(square)" *ngIf="square.value != null" class="inputText"
-          [attr.x]="square.location.column * 40 + 20" [attr.y]="square.location.row * 40 + 37" text-anchor="middle"
-          style="fill: black; font-size: 30px;">{{square.value.value}}</text>
-        <text (click)="gridClicked(square)" *ngIf="square.value != null" [attr.x]="4 + square.location.column * 40"
-          [attr.y]="12 + square.location.row * 40"
-          class="square-label">{{displayLabel(square.value.label)}}</text>
-        <text (click)="gridClicked(square)" text-anchor="end" *ngIf="square.value != null"
-          [attr.x]="36 + square.location.column * 40" [attr.y]="12 + square.location.row * 40"
-          class="square-number">{{square.value.mapping}}</text>
-      </ng-container>
-    </ng-container>
-  </svg>
-  <div class="puzzle-container">
-    <div class="clue-container" *ngFor="let clue of grid.getClues()">
-      <p class="clue">{{clue.hint}}</p>
-      <div class="answer">
-        <ng-container *ngFor="let square of clue.squares">
-          <div [class]="getWordClass(square)" (click)="wordClicked(square)">
-            <span class="inputText">{{square.value.value}}</span>
-            <span class="letter-number">{{square.value.mapping}}</span>
-          </div>
+<div (keydown)="onKeyPress($event)" tabindex="1" (focus)="1" focusable="true"
+  class="min-h-screen flex flex-col h-screen overflow-hidden py-1">
+  <div class="flex justify-center w-full flex-shrink-0">
+    <svg id="crossword" [attr.viewBox]="getViewBox()" xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMidYMin meet" class="max-h-[45vh] w-auto">
+      <ng-container *ngFor="let row of grid.getDisplay()">
+        <ng-container *ngFor="let square of row">
+          <rect (click)="gridClicked(square)" [attr.x]="1 + square.location.column * 40"
+            [attr.y]="1 + square.location.row * 40" width="40" height="40" [class]="getSquareClass(square)"></rect>
+          <text (click)="gridClicked(square)" *ngIf="square.value != null" class="inputText"
+            [attr.x]="square.location.column * 40 + 20" [attr.y]="square.location.row * 40 + 37" text-anchor="middle"
+            style="fill: black; font-size: 30px;">{{square.value.value}}</text>
+          <text (click)="gridClicked(square)" *ngIf="square.value != null" [attr.x]="4 + square.location.column * 40"
+            [attr.y]="12 + square.location.row * 40" class="square-label">{{displayLabel(square.value.label)}}</text>
+          <text (click)="gridClicked(square)" text-anchor="end" *ngIf="square.value != null"
+            [attr.x]="36 + square.location.column * 40" [attr.y]="12 + square.location.row * 40"
+            class="square-number">{{square.value.mapping}}</text>
         </ng-container>
-      </div>
+      </ng-container>
+    </svg>
+  </div>
+  <div class="clue-container flex justify-center py-1">
+    <div class="answer">
+      <ng-container *ngFor="let square of grid.getAuthor().squares">
+        <div [class]="getWordClass(square)" (click)="wordClicked(square)">
+          <span class="inputText">{{square.value.value}}</span>
+          <span class="letter-number">{{displayLabel(square.value.label)}}</span>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="flex-grow overflow-y-auto px-4">
+
+    <div class="flex-grow grid grid-cols-3">
+      <ng-container *ngFor="let clue of grid.getClues()">
+        <div class="clue-container" [id]="clueId(clue.label)">
+          <p class="clue">{{displayLabel(clue.label)}}. {{clue.hint}}</p>
+          <div class="answer">
+            <ng-container *ngFor="let square of clue.squares">
+              <div [class]="getWordClass(square)" (click)="wordClicked(square)">
+                <span class="inputText">{{square.value.value}}</span>
+                <span class="letter-number">{{square.value.mapping}}</span>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
     </div>
   </div>
 </div>

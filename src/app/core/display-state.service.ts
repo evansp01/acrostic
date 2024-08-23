@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import {  Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { Cursor, PuzzleStateService, ValueLabel, Group, GroupIndex, FillState } from './puzzle-state.service';
 import { Square, Puzzle } from './acrformat.service';
 import { PuzzleLibraryService } from './puzzle-library.service';
@@ -85,8 +85,10 @@ export class DisplayStateService implements OnDestroy {
   private subscriptions = new Subscription();
   private display: Display;
   private cursor!: Cursor;
+  public currentClue: BehaviorSubject<ClueLabel>;
 
   constructor(private puzzleStateService: PuzzleStateService, private puzzleLibraryService: PuzzleLibraryService) {
+    this.currentClue = new BehaviorSubject<ClueLabel>(0);
     const puzzle = this.puzzleLibraryService.getPuzzle()
     const state = puzzleStateService.getState().value;
     this.display = this.puzzleToDisplay(puzzle);
@@ -129,7 +131,14 @@ export class DisplayStateService implements OnDestroy {
     }
     const displayAuthor = {
       group: -1,
-      squares: displayClues.map(c => { return c.squares[0] })
+      squares: displayClues.map(c => {
+        return {
+          group: -1,
+          index: c.label,
+          value: c.squares[0].value,
+          focused: false,
+        }
+      })
     }
     const squareMap = new Map<ValueLabel, GridSquare>();
     const grid = puzzle.grid.grid.map((row: readonly (Square | null)[], j) => row.map((square: (Square | null), i) => {
@@ -159,7 +168,7 @@ export class DisplayStateService implements OnDestroy {
   }
 
   private refreshDisplayFromState(state: FillState): void {
-    this.display.grid.valueToSquare.forEach((v,k) => {
+    this.display.grid.valueToSquare.forEach((v, k) => {
       v.value!.value = state.mapping.get(k) ?? ''
     })
     state.mapping.forEach((v, k) => {
@@ -178,17 +187,26 @@ export class DisplayStateService implements OnDestroy {
     })
     this.display.clues.forEach(clue => clue.squares.forEach(square => {
       square.focused = false;
+      square.value.state = DisplayState.REGULAR
     }))
     if (cursor.label == -2) {
       const location = toLocation(cursor.value);
       const square = this.display.grid.display[location.row][location.column];
       square.focused = true;
+      if (square.value != null) {
+        square.value.state = DisplayState.HIGHLIGHTED
+        this.currentClue.next(square.value.label);
+      }
     } else if (cursor.label == -1) {
       const square = this.display.author.squares[cursor.value];
       square.focused = true;
+      square.value.state = DisplayState.HIGHLIGHTED
+      this.currentClue.next(square.value.label);
     } else {
       const square = this.display.clues[cursor.label].squares[cursor.value];
       square.focused = true;
+      square.value.state = DisplayState.HIGHLIGHTED
+      this.currentClue.next(square.value.label);
     }
   }
 
