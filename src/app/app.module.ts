@@ -10,6 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { PuzzleSolverComponent } from './puzzle-solver/puzzle-solver.component';
 
+
 @NgModule({
   declarations: [
     AppComponent, PuzzleDisplayComponent,

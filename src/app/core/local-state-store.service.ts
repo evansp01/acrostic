@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
-import {FillState, PuzzleState } from './puzzle-state.service';
+import { FillState, PuzzleState } from './puzzle-state.service';
+
+const daysToMillis = 24 * 60 * 60 * 1000;
 
 interface StorageItem {
   state: string;
@@ -19,8 +21,11 @@ function stringToStorageItem(json: string | null): StorageItem | null {
 }
 
 export class LocalStateStore {
+  private readonly key: string;
 
-  constructor(private key: string) { }
+  constructor(key: string) {
+    this.key = 'state-' + key;
+  }
 
   attach(puzzleState: PuzzleState): Subscription {
     const existing = this.locateState();
@@ -33,7 +38,7 @@ export class LocalStateStore {
   }
 
   saveState(state: FillState): void {
-    const item: StorageItem = { state: state.serialize(), time: Date.now() };
+    const item: StorageItem = { state: state.serialize(), time: Date.now() + daysToMillis * 7 };
     localStorage.setItem(this.key, JSON.stringify(item));
   }
 
@@ -44,18 +49,38 @@ export class LocalStateStore {
   }
 }
 
+export class FileCache {
+  constructor(private prefix: string) { }
+
+  getFile(id: string): string | null {
+    const item = stringToStorageItem(localStorage.getItem(this.prefix + id))
+    if (item == null) return null;
+    return item.state
+  }
+
+  setFile(id: string, contents: string) {
+    const item: StorageItem = { state: contents, time: Date.now() + daysToMillis * 7 };
+    localStorage.setItem(this.prefix + id, JSON.stringify(item));
+  }
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class LocalStateStoreService {
-  private static daysToMillis = 24 * 60 * 60 * 1000;
+  private cache: FileCache
 
   constructor() {
     this.pruneOldObjects();
+    this.cache = new FileCache('files-');
   }
 
   makeStateStore(key: string): LocalStateStore {
     return new LocalStateStore(key);
+  }
+
+  fileCache(): FileCache {
+    return this.cache
   }
 
   private pruneOldObjects(): void {
@@ -65,7 +90,7 @@ export class LocalStateStoreService {
         localStorage.removeItem(key);
         continue;
       }
-      if (Date.now() - item.time > LocalStateStoreService.daysToMillis * 7) {
+      if (Date.now() > item.time) {
         localStorage.removeItem(key);
       }
     }
