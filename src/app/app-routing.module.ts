@@ -3,6 +3,7 @@ import { ActivatedRouteSnapshot, RedirectCommand, ResolveFn, Router, RouterModul
 import { PuzzleSolverComponent } from './puzzle-solver/puzzle-solver.component';
 import { PuzzleSelectorComponent } from './puzzle-selector/puzzle-selector.component';
 import { PuzzleLibraryService, PuzzleListing } from './core/puzzle-library.service';
+import { provideHttpClient } from '@angular/common/http';
 
 
 export const puzzleResolver: ResolveFn<PuzzleListing | UrlTree> = async (
@@ -28,5 +29,6 @@ const routes: Routes = [
   declarations: [],
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
+  providers: [provideHttpClient()],
 })
 export class AppRoutingModule { }

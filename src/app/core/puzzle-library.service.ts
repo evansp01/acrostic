@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AcrFormatService, Puzzle } from './acrformat.service';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { identifierName } from '@angular/compiler';
 
 const PUZZLE = `! This file made by Acrostic 3.0 program. DO NOT EDIT!
 [QUOTE]
@@ -142,6 +145,7 @@ YOUNGDOCTORSINLOVE
 export interface PuzzleListing {
   id: string,
   link: string,
+  filename: string,
   puzzle: Puzzle,
 }
 
@@ -152,17 +156,26 @@ export interface PuzzleListing {
 export class PuzzleLibraryService {
   private puzzles: Map<string, PuzzleListing>;
 
-  constructor(private acrFormat: AcrFormatService) {
+  constructor(private acrFormat: AcrFormatService, private httpClient: HttpClient) {
     this.puzzles = new Map()
-    const puzzle = this.acrFormat.parseFile(PUZZLE)
-    console.log(puzzle.title)
-    this.addPuzzle(puzzle)
+    this.loadPuzzles()
   }
 
-  addPuzzle(puzzle: Puzzle) {
-    this.puzzles.set(puzzle.title, {
-      id: puzzle.title,
-      link: `/puzzle/${puzzle.title}`,
+  async loadPuzzles() {
+    const puzzles = await firstValueFrom(this.httpClient.get('assets/puzzles/puzzles.json')) as Array<string>
+    for(const puzzle of puzzles) {
+      const response = await firstValueFrom(
+        this.httpClient.get(`assets/puzzles/${puzzle}`, { responseType: 'text' } ))
+      this.addPuzzle(this.acrFormat.parseFile(response), puzzle)
+    }
+  }
+
+  addPuzzle(puzzle: Puzzle, filename: string) {
+    const id = `${filename}-${puzzle.title}-${puzzle.author}`
+    this.puzzles.set(id, {
+      id: id,
+      link: `/puzzle/${id}`,
+      filename: filename,
       puzzle: puzzle,
     })
   }

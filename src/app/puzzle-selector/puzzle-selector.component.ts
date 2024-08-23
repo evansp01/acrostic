@@ -22,7 +22,7 @@ export class PuzzleSelectorComponent {
     if (file) {
       file.text().then((text) => {
         const puzzle = this.acrFormat.parseFile(text);
-        this.puzzleLibrary.addPuzzle(puzzle);
+        this.puzzleLibrary.addPuzzle(puzzle, file.name);
         target.value = '';
       });
     }
