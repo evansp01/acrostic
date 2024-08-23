@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DisplayStateService } from '../core/display-state.service';
 import { LocalStateStoreService } from '../core/local-state-store.service';
 import { FillState, PuzzleStateService } from '../core/puzzle-state.service';
+import { AcrFormatService } from '../core/acrformat.service';
 
 @Component({
   selector: 'app-puzzle-solver',
@@ -11,21 +12,29 @@ import { FillState, PuzzleStateService } from '../core/puzzle-state.service';
   styleUrls: ['./puzzle-solver.component.css'],
   providers: [PuzzleStateService, DisplayStateService]
 })
-export class PuzzleSolverComponent implements OnInit, OnDestroy, AfterViewInit {
+export class PuzzleSolverComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
-  private route: ActivatedRoute;
-  private puzzleState: PuzzleStateService;
-  private localStore: LocalStateStoreService;
-  tabReady = false;
 
-  constructor(route: ActivatedRoute, puzzleState: PuzzleStateService, localStore: LocalStateStoreService) {
-    this.route = route;
-    this.puzzleState = puzzleState;
-    this.localStore = localStore;
-  }
+  constructor(
+    private route: ActivatedRoute,
+    private puzzleState: PuzzleStateService,
+    private localStore: LocalStateStoreService,
+    private serializationService: AcrFormatService
+  ) {}
 
-  ngAfterViewInit(): void {
-    setTimeout(() => { this.tabReady = true; }, 0);
+
+  handleFileInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.item(0);
+    if (file) {
+      file.text().then((text) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const state = this.serializationService.parseFile(text);
+        // this.puzzleStateService.setState(state);
+        // Reset the file input
+        target.value = '';
+      });
+    }
   }
 
   ngOnInit(): void {

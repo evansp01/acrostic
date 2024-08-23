@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GridDisplayComponent } from './grid-display.component';
+import { PuzzleDisplayComponent } from './puzzle-display.component';
 
-describe('GridDisplayComponent', () => {
-  let component: GridDisplayComponent;
-  let fixture: ComponentFixture<GridDisplayComponent>;
+describe('PuzzleDisplayComponent', () => {
+  let component: PuzzleDisplayComponent;
+  let fixture: ComponentFixture<PuzzleDisplayComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [GridDisplayComponent]
+      declarations: [PuzzleDisplayComponent]
     })
       .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GridDisplayComponent);
+    fixture = TestBed.createComponent(PuzzleDisplayComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

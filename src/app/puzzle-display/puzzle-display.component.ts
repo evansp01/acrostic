@@ -4,11 +4,11 @@ import { PuzzleStateService } from '../core/puzzle-state.service';
 import { debounceTime } from 'rxjs';
 
 @Component({
-  selector: 'app-grid-display',
-  templateUrl: './grid-display.component.html',
-  styleUrls: ['./grid-display.component.css']
+  selector: 'app-puzzle-display',
+  templateUrl: './puzzle-display.component.html',
+  styleUrls: ['./puzzle-display.component.css']
 })
-export class GridDisplayComponent implements OnInit {
+export class PuzzleDisplayComponent implements OnInit {
   private state: PuzzleStateService;
 
   // Used by html template.
