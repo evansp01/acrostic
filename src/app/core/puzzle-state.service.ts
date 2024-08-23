@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { PuzzleListing } from './puzzle-library.service';
 
 export type ValueLabel = number
 export type Group = number;
@@ -35,18 +36,21 @@ export class FillState {
 }
 
 
-
-@Injectable()
-export class PuzzleStateService {
-
+export class PuzzleState {
+  private readonly puzzle: PuzzleListing;
   private past: FillState[];
   private future: FillState[];
   private state: BehaviorSubject<FillState>;
 
-  constructor() {
+  constructor(puzzle: PuzzleListing) {
+    this.puzzle = puzzle;
     this.state = new BehaviorSubject(FillState.Empty());
     this.past = [];
     this.future = [];
+  }
+
+  getPuzzle(): PuzzleListing {
+    return this.puzzle;
   }
 
   getState(): BehaviorSubject<FillState> {
@@ -100,5 +104,24 @@ export class PuzzleStateService {
     }
     this.past.push(this.state.value);
     this.state.next(newState);
+  }
+}
+
+
+@Injectable()
+export class PuzzleStateService {
+
+  private puzzle: BehaviorSubject<PuzzleState | null>;
+
+  constructor() {
+    this.puzzle = new BehaviorSubject<PuzzleState | null>(null)
+  }
+
+  setPuzzle(puzzle: PuzzleListing) {
+    this.puzzle.next(new PuzzleState(puzzle))
+  }
+
+  getPuzzle(): Observable<PuzzleState | null> {
+    return this.puzzle;
   }
 }

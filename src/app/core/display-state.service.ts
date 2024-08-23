@@ -1,8 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { Cursor, PuzzleStateService, ValueLabel, Group, GroupIndex, FillState } from './puzzle-state.service';
+import { BehaviorSubject, filter, Subscription, switchMap } from 'rxjs';
+import { Cursor, PuzzleStateService, ValueLabel, Group, GroupIndex, FillState, PuzzleState } from './puzzle-state.service';
 import { Square, Puzzle } from './acrformat.service';
-import { PuzzleLibraryService } from './puzzle-library.service';
 
 export type ClueLabel = number;
 
@@ -83,21 +82,24 @@ function clamp(min: number, x: number, max: number) {
 @Injectable()
 export class DisplayStateService implements OnDestroy {
   private subscriptions = new Subscription();
-  private display: Display;
+  private display!: Display;
   private cursor!: Cursor;
+  private puzzleState!: PuzzleState;
   public currentClue: BehaviorSubject<ClueLabel>;
 
-  constructor(private puzzleStateService: PuzzleStateService, private puzzleLibraryService: PuzzleLibraryService) {
+  constructor(private puzzleStateService: PuzzleStateService) {
     this.currentClue = new BehaviorSubject<ClueLabel>(0);
-    const puzzle = this.puzzleLibraryService.getPuzzle('"Rogue Nation"')!
-    const state = puzzleStateService.getState().value;
-    this.display = this.puzzleToDisplay(puzzle.puzzle);
-    this.refreshDisplayFromState(state);
-    this.subscriptions.add(this.puzzleStateService.getState().subscribe({
-      next: s => {
-        this.refreshDisplayFromState(s);
-      },
-    }));
+    this.subscriptions.add(this.puzzleStateService.getPuzzle().pipe(filter(v => v != null)).pipe(
+      switchMap(puzzle => {
+        this.currentClue.next(0);
+        this.puzzleState = puzzle!;
+        this.display = this.puzzleToDisplay(this.puzzleState.getPuzzle().puzzle);
+        return this.puzzleState.getState()
+      })).subscribe(
+        (state) => {
+          this.refreshDisplayFromState(state);
+        }
+      ))
   }
 
   ngOnDestroy(): void {
@@ -219,6 +221,10 @@ export class DisplayStateService implements OnDestroy {
     return this.display.author
   }
 
+  getState(): PuzzleState {
+    return this.puzzleState;
+  }
+
   moveAcross(step: number): void {
     const cursor = this.cursor;
     if (cursor.label == -2) {
@@ -291,7 +297,7 @@ export class DisplayStateService implements OnDestroy {
       if (square.value == null) {
         return;
       }
-      this.puzzleStateService.setValue(cursor, square.value.mapping, value);
+      this.puzzleState.setValue(cursor, square.value.mapping, value);
       const nextSquare = this.display.grid.valueToSquare.get(square.value.mapping + step);
       if (nextSquare == undefined) {
         return;
@@ -301,13 +307,13 @@ export class DisplayStateService implements OnDestroy {
         value: toGroupIndex(nextSquare.location),
       });
     } else if (cursor.label == -1) {
-      const square  = this.display.author.squares[cursor.value]
-      this.puzzleStateService.setValue(cursor, square.value.mapping, value)
+      const square = this.display.author.squares[cursor.value]
+      this.puzzleState.setValue(cursor, square.value.mapping, value)
       this.moveAcross(step);
     } else {
       const clue = this.display.clues[cursor.label]
       const square = clue.squares[cursor.value]
-      this.puzzleStateService.setValue(cursor, square.value.mapping, value)
+      this.puzzleState.setValue(cursor, square.value.mapping, value)
       this.moveAcross(step);
     }
   }

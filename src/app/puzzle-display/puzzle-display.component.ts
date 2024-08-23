@@ -1,6 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ClueLabel, DisplayState, DisplayStateService, GridSquare, WordSquare } from '../core/display-state.service';
-import { PuzzleStateService } from '../core/puzzle-state.service';
 import { debounceTime } from 'rxjs';
 
 @Component({
@@ -9,15 +8,12 @@ import { debounceTime } from 'rxjs';
   styleUrls: ['./puzzle-display.component.css']
 })
 export class PuzzleDisplayComponent implements OnInit {
-  private state: PuzzleStateService;
-
   // Used by html template.
-  grid: DisplayStateService;
+  readonly grid: DisplayStateService;
   displayState = DisplayState;
 
-  constructor(gridDisplay: DisplayStateService, puzzleStateService: PuzzleStateService) {
+  constructor(gridDisplay: DisplayStateService) {
     this.grid = gridDisplay;
-    this.state = puzzleStateService;
   }
 
   ngOnInit(): void {
@@ -95,11 +91,11 @@ export class PuzzleDisplayComponent implements OnInit {
         case 'Z':
           if (event.ctrlKey && !event.shiftKey) {
             console.log('undo')
-            this.state.undo();
+            this.grid.getState().undo();
             event.preventDefault();
           } else if (event.ctrlKey && event.shiftKey) {
             console.log('redo')
-            this.state.redo();
+            this.grid.getState().redo();
             event.preventDefault();
           }
       }

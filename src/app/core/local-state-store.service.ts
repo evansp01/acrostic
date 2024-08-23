@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
-import {FillState, PuzzleStateService } from './puzzle-state.service';
+import {FillState, PuzzleState } from './puzzle-state.service';
 
 interface StorageItem {
   state: string;
@@ -22,10 +22,9 @@ export class LocalStateStore {
 
   constructor(private key: string) { }
 
-  attach(puzzleState: PuzzleStateService): Subscription {
+  attach(puzzleState: PuzzleState): Subscription {
     const existing = this.locateState();
     if (existing != null) {
-      console.log(existing)
       puzzleState.setState(existing);
     }
     return puzzleState.getState().subscribe(s => {
