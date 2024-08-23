@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
 import { DisplayStateService } from '../core/display-state.service';
 import { LocalStateStoreService } from '../core/local-state-store.service';
-import { PuzzleStateService } from '../core/puzzle-state.service';
+import { FillState, PuzzleStateService } from '../core/puzzle-state.service';
 import { PuzzleListing } from '../core/puzzle-library.service';
 
 @Component({
@@ -19,12 +19,16 @@ export class PuzzleSolverComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private puzzleState: PuzzleStateService,
     private localStore: LocalStateStoreService,
+    private displayState: DisplayStateService,
   ) {
     this.subscriptions.add(this.puzzleState.getPuzzle().pipe(filter(p => p != null)).subscribe((puzzle) => {
       this.localStore.makeStateStore(puzzle!.getPuzzle().id).attach(puzzle!);
     }))
   }
 
+  reset(): void {
+    this.displayState.getState().setState(FillState.empty())
+  }
 
   ngOnInit(): void {
     this.route.data.subscribe(({puzzle}) => {

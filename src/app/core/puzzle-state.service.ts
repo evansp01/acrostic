@@ -18,7 +18,7 @@ export class FillState {
     public readonly mapping: Map<ValueLabel, string>) {
   }
 
-  static Empty(): FillState {
+  static empty(): FillState {
     return new FillState({ label: 0, value: 0 }, new Map<ValueLabel, string>())
   }
 
@@ -44,7 +44,7 @@ export class PuzzleState {
 
   constructor(puzzle: PuzzleListing) {
     this.puzzle = puzzle;
-    this.state = new BehaviorSubject(FillState.Empty());
+    this.state = new BehaviorSubject(FillState.empty());
     this.past = [];
     this.future = [];
   }

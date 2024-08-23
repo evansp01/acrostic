@@ -85,7 +85,7 @@ export class DisplayStateService implements OnDestroy {
   private display!: Display;
   private cursor!: Cursor;
   private puzzleState!: PuzzleState;
-  public currentClue: BehaviorSubject<ClueLabel>;
+  public readonly currentClue: BehaviorSubject<ClueLabel>;
 
   constructor(private puzzleStateService: PuzzleStateService) {
     this.currentClue = new BehaviorSubject<ClueLabel>(0);

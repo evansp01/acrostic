@@ -1,8 +1,8 @@
 <div class="flex flex-col min-h-screen h-screen overflow-hidden">
     <nav class="bg-gray-100 py-0.5 px-4">
         <div class="flex items-center">
-            <a href="#" class="text-md font-semibold mr-4">Acrostic</a>
-            <button [routerLink]="['/puzzle']" class="px-3 py-0.5 text-sm text-gray-700 hover:bg-gray-200 rounded mr-2">New</button>
+            <a [routerLink]="['/']" class="text-md font-semibold mr-4">Acrostic</a>
+            <button (click)="reset()" class="px-3 py-0.5 text-sm text-gray-700 hover:bg-gray-200 rounded mr-2">Reset</button>
         </div>
     </nav>
     <app-puzzle-display class="flex-1 flex flex-col overflow-hidden py-1"></app-puzzle-display>
