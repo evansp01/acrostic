@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AcrFormatService, Puzzle } from './acrformat.service';
 import { HttpClient } from '@angular/common/http';
-import { filter, interval, take } from 'rxjs';
+import { BehaviorSubject, filter, interval, take } from 'rxjs';
 import { LocalStateStoreService } from './local-state-store.service';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,9 +25,11 @@ interface DriveFile {
 })
 export class PuzzleLibraryService {
   private puzzles: Map<string, PuzzleListing>;
+  private subject: BehaviorSubject<Array<PuzzleListing>>;
 
   constructor(private acrFormat: AcrFormatService, private localStore: LocalStateStoreService, private httpClient: HttpClient) {
     this.puzzles = new Map()
+    this.subject = new BehaviorSubject<Array<PuzzleListing>>([])
     interval(50).pipe(filter(() => gapi != undefined), take(1)).subscribe(() => {
       gapi.load('client', () => { this.loadPuzzlesFromDrive() });
     })
@@ -63,7 +65,7 @@ export class PuzzleLibraryService {
     const cache = this.localStore.fileCache();
     try {
       const cached = cache.getFile(fileId)
-      if (cached != undefined) {
+      if (cached != null) {
         return cached;
       }
       const response = await gapi.client.drive.files.get({
@@ -100,7 +102,11 @@ export class PuzzleLibraryService {
     }).then(() => {
       this.getAcrFilesWithContents('1uajRYn32brdL5Unow6XhuvO1KHt2za89').then((files) => {
         for (const file of files) {
-          this.addPuzzle(this.acrFormat.parseFile(file.contents), file.name)
+          try {
+            this.addPuzzle(this.acrFormat.parseFile(file.contents), file.name)
+          } catch (error) {
+            console.log(`error converting ${file}: ${error}`)
+          }
         }
       })
     })
@@ -108,16 +114,18 @@ export class PuzzleLibraryService {
 
   addPuzzle(puzzle: Puzzle, filename: string) {
     const id = `${filename}-${puzzle.title}-${puzzle.author}`
+    console.log(id)
     this.puzzles.set(id, {
       id: id,
       link: `/puzzle/${id}`,
       filename: filename,
       puzzle: puzzle,
     })
+    this.subject.next(Array.from(this.puzzles.values()))
   }
 
-  getPuzzles(): Array<PuzzleListing> {
-    return Array.from(this.puzzles.values())
+  getPuzzles(): BehaviorSubject<Array<PuzzleListing>> {
+    return this.subject;
   }
 
   getPuzzle(id: string): PuzzleListing | undefined {

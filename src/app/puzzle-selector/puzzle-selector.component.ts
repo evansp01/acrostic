@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { PuzzleLibraryService, PuzzleListing } from '../core/puzzle-library.service';
 import { AcrFormatService } from '../core/acrformat.service';
 
@@ -7,13 +7,19 @@ import { AcrFormatService } from '../core/acrformat.service';
   templateUrl: './puzzle-selector.component.html',
   styleUrl: './puzzle-selector.component.css'
 })
-export class PuzzleSelectorComponent {
+export class PuzzleSelectorComponent implements OnInit {
 
-  constructor(private puzzleLibrary: PuzzleLibraryService, private acrFormat: AcrFormatService) {
+  constructor(private puzzleLibrary: PuzzleLibraryService, private acrFormat: AcrFormatService, private  changeDetector: ChangeDetectorRef) {
+  }
+
+  ngOnInit() {
+    this.puzzleLibrary.getPuzzles().subscribe(() => {
+      this.changeDetector.detectChanges()
+    })
   }
 
   puzzles(): Array<PuzzleListing> {
-    return this.puzzleLibrary.getPuzzles()
+    return this.puzzleLibrary.getPuzzles().value
   }
 
   handleFileInput(event: Event): void {
