@@ -1,14 +1,15 @@
 {
-  "name": "cross",
+  "name": "acrostic",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "prebuild": "node package-puzzles.js",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "bundle-report": "webpack-bundle-analyzer dist/cross/stats.json"
+    "bundle-report": "webpack-bundle-analyzer dist/acrostic/stats.json"
   },
   "private": true,
   "dependencies": {
@@ -23,10 +24,9 @@
     "@angular/platform-browser": "^18.1.3",
     "@angular/platform-browser-dynamic": "^18.1.3",
     "@angular/router": "^18.1.3",
-    "@ng-bootstrap/ng-bootstrap": "^17.0.0",
-    "bootstrap": "^4.6.0",
     "file-saver": "^2.0.5",
     "file-saver-es": "^2.0.5",
+    "fs": "^0.0.1-security",
     "jquery": "^3.6.0",
     "ngx-quill": "^26.0.5",
     "popper.js": "^1.16.1",
