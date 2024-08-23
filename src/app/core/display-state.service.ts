@@ -89,9 +89,9 @@ export class DisplayStateService implements OnDestroy {
 
   constructor(private puzzleStateService: PuzzleStateService, private puzzleLibraryService: PuzzleLibraryService) {
     this.currentClue = new BehaviorSubject<ClueLabel>(0);
-    const puzzle = this.puzzleLibraryService.getPuzzle()
+    const puzzle = this.puzzleLibraryService.getPuzzle('"Rogue Nation"')!
     const state = puzzleStateService.getState().value;
-    this.display = this.puzzleToDisplay(puzzle);
+    this.display = this.puzzleToDisplay(puzzle.puzzle);
     this.refreshDisplayFromState(state);
     this.subscriptions.add(this.puzzleStateService.getState().subscribe({
       next: s => {

@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RedirectComponent } from './redirect.component';
 import { PuzzleSolverComponent } from './puzzle-solver/puzzle-solver.component';
+import { PuzzleSelectorComponent } from './puzzle-selector/puzzle-selector.component';
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: '/puzzle' },
-  { path: 'puzzle', pathMatch: 'full', component: RedirectComponent },
+  { path: '', pathMatch: 'full', redirectTo: '/library' },
+  { path: 'library', pathMatch: 'full', component: PuzzleSelectorComponent },
   { path: 'puzzle/:id', component: PuzzleSolverComponent },
 ];
 

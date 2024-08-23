@@ -1,4 +1,4 @@
-import { Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AcrFormatService, Puzzle } from './acrformat.service';
 
 const PUZZLE = `! This file made by Acrostic 3.0 program. DO NOT EDIT!
@@ -139,15 +139,39 @@ YOUNGDOCTORSINLOVE
 1500
 `
 
+export interface PuzzleListing {
+  id: string,
+  link: string,
+  puzzle: Puzzle,
+}
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class PuzzleLibraryService {
+  private puzzles: Map<string, PuzzleListing>;
 
-  constructor(private acrFormat: AcrFormatService) { }
+  constructor(private acrFormat: AcrFormatService) {
+    this.puzzles = new Map()
+    const puzzle = this.acrFormat.parseFile(PUZZLE)
+    console.log(puzzle.title)
+    this.addPuzzle(puzzle)
+  }
 
-  getPuzzle(): Puzzle {
-    return this.acrFormat.parseFile(PUZZLE)
+  addPuzzle(puzzle: Puzzle) {
+    this.puzzles.set(puzzle.title, {
+      id: puzzle.title,
+      link: `/puzzle/${puzzle.title}`,
+      puzzle: puzzle,
+    })
+  }
+
+  getPuzzles(): Array<PuzzleListing> {
+    return Array.from(this.puzzles.values())
+  }
+
+  getPuzzle(id: string): PuzzleListing | undefined {
+    return this.puzzles.get(id)
   }
 }

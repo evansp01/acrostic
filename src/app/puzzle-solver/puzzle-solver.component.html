@@ -3,8 +3,6 @@
         <div class="flex items-center">
             <a href="#" class="text-md font-semibold mr-4">Acrostic</a>
             <button [routerLink]="['/puzzle']" class="px-3 py-0.5 text-sm text-gray-700 hover:bg-gray-200 rounded mr-2">New</button>
-            <input type="file" #fileupload (change)="handleFileInput($event)" class="hidden">
-            <button (click)="fileupload.click()" class="px-3 py-0.5 text-sm text-gray-700 hover:bg-gray-200 rounded">Import</button>
         </div>
     </nav>
     <app-puzzle-display class="flex-1 flex flex-col overflow-hidden py-1"></app-puzzle-display>
