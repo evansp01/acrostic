@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
 import { ClueLabel, DisplayState, DisplayStateService, GridSquare, WordSquare } from '../core/display-state.service';
 import { debounceTime } from 'rxjs';
 
@@ -10,10 +10,12 @@ import { debounceTime } from 'rxjs';
 export class PuzzleDisplayComponent implements OnInit {
   // Used by html template.
   readonly grid: DisplayStateService;
+  readonly changeRef: ChangeDetectorRef
   displayState = DisplayState;
 
-  constructor(gridDisplay: DisplayStateService) {
+  constructor(gridDisplay: DisplayStateService, changeRef: ChangeDetectorRef) {
     this.grid = gridDisplay;
+    this.changeRef = changeRef;
   }
 
   ngOnInit(): void {
@@ -100,6 +102,7 @@ export class PuzzleDisplayComponent implements OnInit {
           }
       }
       // Ignore anything other than z when control/meta is held down
+      this.changeRef.detectChanges()
       return;
     }
     // The switch statement handles keypresses with special meaning
@@ -108,22 +111,22 @@ export class PuzzleDisplayComponent implements OnInit {
       case 'Left':
         this.grid.moveAcross(-1);
         event.preventDefault();
-        return;
+        break;
       case 'ArrowRight':
       case 'Right':
         this.grid.moveAcross(1);
         event.preventDefault();
-        return;
+        break;
       case 'ArrowUp':
       case 'Up':
         this.grid.moveDown(-1);
         event.preventDefault();
-        return;
+        break;
       case 'ArrowDown':
       case 'Down':
         this.grid.moveDown(1);
         event.preventDefault();
-        return;
+        break;
       case 'Tab':
         // handle tab
         if (event.shiftKey) {
@@ -132,23 +135,26 @@ export class PuzzleDisplayComponent implements OnInit {
           this.grid.moveGroup(1)
         }
         event.preventDefault();
-        return;
+        break;
       case 'Enter':
-        return;
+        break;
       case 'Backspace':
         this.grid.mutateAndStep('', -1);
         event.preventDefault();
-        return;
+        break;
       case ' ':
       case 'Spacebar':
         this.grid.mutateAndStep('', 1);
         event.preventDefault();
-        return;
+        break;
+      default: {
+        const code = event.key.charCodeAt(0);
+        if (event.key.length === 1 && code >= 32 && code < 127) {
+          this.grid.mutateAndStep(event.key.toUpperCase(), 1);
+        }
+      }
     }
-    const code = event.key.charCodeAt(0);
-    if (event.key.length === 1 && code >= 32 && code < 127) {
-      this.grid.mutateAndStep(event.key.toUpperCase(), 1);
-    }
+    this.changeRef.detectChanges()
   }
 }
 
