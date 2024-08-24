@@ -19,6 +19,22 @@ interface DriveFile {
   id: string
 }
 
+const cyrb53 = (str: string, seed = 0) => {
+  // https://stackoverflow.com/a/52171480
+  let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+  for(let i = 0, ch; i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1  = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+  h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2  = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+  h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+};
+
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +46,7 @@ export class PuzzleLibraryService {
   constructor(private acrFormat: AcrFormatService, private localStore: LocalStateStoreService, private httpClient: HttpClient) {
     this.puzzles = new Map()
     this.subject = new BehaviorSubject<Array<PuzzleListing>>([])
-    interval(50).pipe(filter(() => gapi != undefined), take(1)).subscribe(() => {
+    interval(100).pipe(filter(() => gapi != undefined), take(1)).subscribe(() => {
       gapi.load('client', () => { this.loadPuzzlesFromDrive() });
     })
   }
@@ -95,7 +111,6 @@ export class PuzzleLibraryService {
   }
 
   loadPuzzlesFromDrive() {
-    // 2. Initialize the JavaScript client library.
     gapi.client.init({
       apiKey: "AIzaSyA0FE5rL086cgl7IzbwRhufFzQ8wJi4xmY",
       discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
@@ -113,8 +128,7 @@ export class PuzzleLibraryService {
   }
 
   addPuzzle(puzzle: Puzzle, filename: string) {
-    const id = `${filename}-${puzzle.title}-${puzzle.author}`
-    console.log(id)
+    const id = cyrb53(JSON.stringify(puzzle)).toString(16)
     this.puzzles.set(id, {
       id: id,
       link: `/puzzle/${id}`,
