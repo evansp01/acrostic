@@ -42,7 +42,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "with": "src/environments/environment.production.ts"
                 }
               ],
               "optimization": false,
@@ -97,8 +97,7 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": [
-            ]
+            "scripts": []
           }
         },
         "e2e": {
@@ -115,11 +114,23 @@
         },
         "deploy": {
           "builder": "angular-cli-ghpages:deploy"
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
   "cli": {
-    "analytics": "1e34d2e5-2be1-48c0-b6ed-72465c4af5d3"
+    "analytics": "1e34d2e5-2be1-48c0-b6ed-72465c4af5d3",
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

@@ -3,6 +3,7 @@ import { AcrFormatService, Puzzle } from './acrformat.service';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, filter, interval, take } from 'rxjs';
 import { LocalStateStoreService } from './local-state-store.service';
+import { environment } from '../../environments/environment';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const gapi: any | undefined;
@@ -41,11 +42,11 @@ const cyrb53 = (str: string, seed = 0) => {
 })
 export class PuzzleLibraryService {
   private puzzles: Map<string, PuzzleListing>;
-  private subject: BehaviorSubject<Array<PuzzleListing>>;
+  private subject: BehaviorSubject<PuzzleListing[]>;
 
   constructor(private acrFormat: AcrFormatService, private localStore: LocalStateStoreService, private httpClient: HttpClient) {
     this.puzzles = new Map()
-    this.subject = new BehaviorSubject<Array<PuzzleListing>>([])
+    this.subject = new BehaviorSubject<PuzzleListing[]>([])
     interval(100).pipe(filter(() => gapi != undefined), take(1)).subscribe(() => {
       gapi.load('client', () => { this.loadPuzzlesFromDrive() });
     })
@@ -111,8 +112,9 @@ export class PuzzleLibraryService {
   }
 
   loadPuzzlesFromDrive() {
+    console.log(environment.googleApiKey)
     gapi.client.init({
-      apiKey: "AIzaSyA0FE5rL086cgl7IzbwRhufFzQ8wJi4xmY",
+      apiKey: environment.googleApiKey,
       discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
     }).then(() => {
       this.getAcrFilesWithContents('1uajRYn32brdL5Unow6XhuvO1KHt2za89').then((files) => {
