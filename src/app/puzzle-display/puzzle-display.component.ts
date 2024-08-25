@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { ClueLabel, DisplayState, DisplayStateService, GridSquare, WordSquare } from '../core/display-state.service';
 import { debounceTime } from 'rxjs';
 
@@ -7,7 +7,7 @@ import { debounceTime } from 'rxjs';
   templateUrl: './puzzle-display.component.html',
   styleUrls: ['./puzzle-display.component.css']
 })
-export class PuzzleDisplayComponent implements OnInit {
+export class PuzzleDisplayComponent implements OnInit, OnDestroy {
   // Used by html template.
   readonly grid: DisplayStateService;
   readonly changeRef: ChangeDetectorRef

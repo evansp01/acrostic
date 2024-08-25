@@ -14,13 +14,13 @@ export interface Square {
 export interface Grid {
   height: number;
   width: number;
-  grid: ReadonlyArray<ReadonlyArray<Square | null>>;
+  grid: readonly (readonly (Square | null)[])[];
 }
 
 export interface Clue {
   hint: string;
   label: ClueLabel;
-  mapping: ReadonlyArray<ValueLabel>;
+  mapping: readonly ValueLabel[];
 }
 
 export interface Puzzle {
@@ -35,8 +35,6 @@ export interface Puzzle {
 })
 export class AcrFormatService {
   private MAGIC_HEADER = "! This file made by Acrostic 3.0 program. DO NOT EDIT!"
-
-  constructor() { }
 
   private parseSection(line: string): [string, boolean] {
     const trimmed = line.trim();
@@ -123,7 +121,7 @@ export class AcrFormatService {
   private parseGrid(lines: string[], squares: Map<ValueLabel, Square>): Grid {
     const height = lines.length;
     const width = lines[0].length;
-    const grid: Array<Array<Square | null>> = [];
+    const grid: (Square | null)[][] = [];
     let mapping: ValueLabel = 1;
     for (let j = 0; j < lines.length; j++) {
       const line = lines[j];

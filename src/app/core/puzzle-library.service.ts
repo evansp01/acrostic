@@ -53,8 +53,8 @@ export class PuzzleLibraryService {
   }
 
 
-  async getAcrFilesInFolder(folderId: string): Promise<Array<DriveFile>> {
-    let allFiles: Array<DriveFile> = [];
+  async getAcrFilesInFolder(folderId: string): Promise<DriveFile[]> {
+    let allFiles: DriveFile[] = [];
     let pageToken = null;
 
     do {
@@ -112,7 +112,6 @@ export class PuzzleLibraryService {
   }
 
   loadPuzzlesFromDrive() {
-    console.log(environment.googleApiKey)
     gapi.client.init({
       apiKey: environment.googleApiKey,
       discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
@@ -140,7 +139,7 @@ export class PuzzleLibraryService {
     this.subject.next(Array.from(this.puzzles.values()))
   }
 
-  getPuzzles(): BehaviorSubject<Array<PuzzleListing>> {
+  getPuzzles(): BehaviorSubject<PuzzleListing[]> {
     return this.subject;
   }
 
