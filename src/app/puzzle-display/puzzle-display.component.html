@@ -1,3 +1,5 @@
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <div class="flex justify-center w-full flex-shrink-0">
   <svg id="crossword" [attr.viewBox]="getViewBox()" xmlns="http://www.w3.org/2000/svg"
     preserveAspectRatio="xMidYMin meet" class="max-h-[45vh] w-auto">
@@ -5,12 +7,12 @@
       <ng-container *ngFor="let square of row">
         <rect (click)="gridClicked(square)" [attr.x]="1 + square.location.column * 40"
           [attr.y]="1 + square.location.row * 40" width="40" height="40" [class]="getSquareClass(square)"></rect>
-        <text (click)="gridClicked(square)" *ngIf="square.value != null" class="inputText"
+        <text (click)="gridClicked(square)" *ngIf="square.value !== null" class="inputText"
           [attr.x]="square.location.column * 40 + 20" [attr.y]="square.location.row * 40 + 37" text-anchor="middle"
           style="fill: black; font-size: 30px;">{{square.value.value}}</text>
-        <text (click)="gridClicked(square)" *ngIf="square.value != null" [attr.x]="4 + square.location.column * 40"
+        <text (click)="gridClicked(square)" *ngIf="square.value !== null" [attr.x]="4 + square.location.column * 40"
           [attr.y]="12 + square.location.row * 40" class="square-label">{{displayLabel(square.value.label)}}</text>
-        <text (click)="gridClicked(square)" text-anchor="end" *ngIf="square.value != null"
+        <text (click)="gridClicked(square)" text-anchor="end" *ngIf="square.value !== null"
           [attr.x]="36 + square.location.column * 40" [attr.y]="12 + square.location.row * 40"
           class="square-number">{{square.value.mapping}}</text>
       </ng-container>
