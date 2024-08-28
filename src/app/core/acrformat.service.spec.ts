@@ -139,6 +139,93 @@ YOUNGDOCTORSINLOVE
 1500
 `
 
+const exampleFile2 = `! This file made by Acrostic 3.0 program. DO NOT EDIT!
+[QUOTE]
+Emily D@How happ@How happy is the little Stone That rambles in the Road alone And doesn't care about Careers And Exigencies never fears - Whose coat of elemental Brown A passing Universe put on
+[GRID]
+########HOW#HAPPY#IS#
+THE#LITTLE#STONE#THAT
+#RAMBLES#IN#THE#ROAD#
+ALONE#AND#DOESNT#CARE
+#ABOUT#CAREERS#AND#EX
+IGENCIES#NEVER#FEARS-
+WHOSE#COAT#OF#ELEMENT
+AL#BROWN#A#PASSING#UN
+IVERSE#PUT#ON########
+[NUMGRID]
+163 97 8 88 116 155 38 16 45 21 127 34 11 80 93 
+136 110 33 90 81 36 74 143 18 96 
+98 99 59 121 86 149 138 71 
+40 108 73 47 103 27 54 135 162 44 123 147 156 115 
+9 133 85 69 128 117 
+94 114 57 19 102 161 52 169 153 63 137 12 25 
+1 6 89 66 125 144 159 105 31 
+172 70 14 58 168 2 113 20 32 87 119 145 164 134 64 
+146 92 109 41 141 100 28 157 170 120 165 
+48 78 131 139 152 111 53 15 84 5 37 101 82 166 75 
+62 173 42 3 23 51 56 79 22 49 
+151 67 160 26 130 126 107 154 
+7 60 140 39 68 29 122 76 104 
+[title]
+Untitled
+[byline]
+by Anonymous
+[copyright]
+Puzzle � 2003 by
+[labels]
+1 G|2 H|3 K|4 J|5 G|6 M|7 A|8 E|9 A|10 F|11 H|12 J|13 A|14 B|15 F|16 H|
+17 A|18 K|19 K|20 F|21 L|22 D|23 I|24 M|25 G|26 H|27 B|28 A|29 B|30 J|31 A|32 M|33 D|
+34 I|35 K|36 D|37 A|38 D|39 J|40 K|41 K|42 F|43 J|44 D|45 K|46 F|47 H|48 C|49 M|
+50 K|51 F|52 H|53 G|54 L|55 M|56 E|57 H|58 C|59 D|60 B|61 J|62 M|63 J|64 K|65 A|
+66 B|67 J|68 J|69 E|70 C|71 H|72 A|73 G|74 B|75 I|76 A|77 F|78 B|79 A|80 C|81 C|82 I|
+83 J|84 F|85 D|86 M|87 G|88 L|89 D|90 I|91 B|92 J|93 H|94 F|95 D|96 A|97 E|98 H|99 I|
+100 C|101 M|102 D|103 G|104 L|105 A|106 E|107 L|108 J|109 E|110 H|111 D|112 B|113 F|114 C|115 J|116 M|
+117 I|118 B|119 G|120 H|121 I|122 D|123 C|124 L|125 J|126 F|127 L|128 A|129 D|130 I|131 G|132 L|
+133 F|134 D|135 A|136 H|137 I|138 J|139 H|140 F|141 I|142 H|143 K|
+[keywords]
+A. The act of trying things out
+EXPERIMENTATION
+135 79 7 72 96 128 31 13 37 17 105 28 9 65 76 
+B. Can be determined
+MEASURABLE
+112 91 27 74 66 29 60 118 14 78 
+C. Clueless
+IGNORANT
+80 81 48 100 70 123 114 58 
+D. The best HPST local group name (3 wds)
+LECTIODEVIENNA
+33 89 59 38 85 22 44 111 134 36 102 122 129 95 
+E. Rising agents in bread
+YEASTS
+8 109 69 56 106 97 
+F. Property of good food
+DELICIOUSNESS
+77 94 46 15 84 133 42 140 126 51 113 10 20 
+G. Property of Hungry Ghost bread (2 wds)
+HARDCRUST
+1 5 73 53 103 119 131 87 25 
+H. Where we are, per a song (5 wds)
+ONTOPOFTHEWORLD
+142 57 11 47 139 2 93 16 26 71 98 120 136 110 52 
+I. We might be on the same one of these
+WAVELENGTHS
+121 75 90 34 117 82 23 130 141 99 137 
+J. Reader of the non-Torah sacred text at a Shabbat service (2 wds)
+HAFTARAHCHANTER
+39 63 108 115 125 92 43 12 68 4 30 83 67 138 61 
+K. Can be solved
+ANSWERABLE
+50 143 35 3 19 41 45 64 18 40 
+L. Floating supports
+PONTOONS
+124 54 132 21 107 104 88 127 
+M. [Food; insect; looking] they rhyme (3 wds)
+PEABEESEE
+6 49 116 32 55 24 101 62 86 
+[randseed]
+1500
+`
+
 describe('AcrformatService', () => {
   let service: AcrFormatService;
 
@@ -153,5 +240,10 @@ describe('AcrformatService', () => {
   it('should parse file', () => {
     const puzzle = service.parseFile(exampleFile)
     expect(puzzle.author).toEqual("Billym")
+  })
+
+  it('should parse file', () => {
+    const puzzle = service.parseFile(exampleFile2)
+    expect(puzzle.author).toEqual("Untitleds")
   })
 });
