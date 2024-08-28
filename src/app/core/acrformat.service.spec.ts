@@ -21,6 +21,6 @@ describe('AcrformatService', () => {
 
   it('should parse file', () => {
     const puzzle = service.parseFile(examplePuzzle2)
-    expect(puzzle.author).toEqual("Untitleds")
+    expect(puzzle.author).toEqual("Untitled")
   })
 });

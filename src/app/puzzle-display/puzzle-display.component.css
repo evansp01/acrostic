@@ -34,6 +34,10 @@ div:focus {
     fill: black;
     font-size: 10px;
 }
+.square-text {
+    fill: black;
+    font-size: 30px;
+}
 
 .clue-container {
     margin-bottom: 12px;
