@@ -45,9 +45,14 @@ export class PuzzleDisplayComponent implements OnInit, OnDestroy {
   }
 
   getViewBox(): string {
-    const width = 40 * this.grid.getDisplay().length + 2;
-    const height = 40 * this.grid.getDisplay()[0].length + 2;
-    return `0 0 ${height} ${width}`
+    const height = 40 * this.grid.getDisplay().length + 2;
+    const width = 40 * this.grid.getDisplay()[0].length + 2;
+    return `0 0 ${width} ${height}`
+  }
+
+  getWidthLimit(): number {
+    const width = (40 * this.grid.getDisplay()[0].length + 2) * 1;
+    return width * 0.9
   }
 
   displayLabel(l: ClueLabel): string {

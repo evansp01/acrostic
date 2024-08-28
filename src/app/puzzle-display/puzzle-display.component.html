@@ -2,7 +2,7 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <div class="flex justify-center w-full flex-shrink-0">
   <svg id="crossword" [attr.viewBox]="getViewBox()" xmlns="http://www.w3.org/2000/svg"
-    preserveAspectRatio="xMidYMin meet" class="max-h-[45vh] w-auto">
+    preserveAspectRatio="xMidYMin meet" class="max-h-[45vh] w-full" [style.max-width.px]="getWidthLimit()">
     <ng-container *ngFor="let row of grid.getDisplay()">
       <ng-container *ngFor="let square of row">
         <rect (click)="gridClicked(square)" [attr.x]="1 + square.location.column * 40"
