@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AcrFormatService, Puzzle } from './acrformat.service';
-import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, filter, interval, take } from 'rxjs';
 import { LocalStateStoreService } from './local-state-store.service';
 import { environment } from '../../environments/environment';
@@ -44,7 +43,7 @@ export class PuzzleLibraryService {
   private puzzles: Map<string, PuzzleListing>;
   private subject: BehaviorSubject<PuzzleListing[]>;
 
-  constructor(private acrFormat: AcrFormatService, private localStore: LocalStateStoreService, private httpClient: HttpClient) {
+  constructor(private acrFormat: AcrFormatService, private localStore: LocalStateStoreService) {
     this.puzzles = new Map()
     this.subject = new BehaviorSubject<PuzzleListing[]>([])
     interval(100).pipe(filter(() => gapi != undefined), take(1)).subscribe(() => {

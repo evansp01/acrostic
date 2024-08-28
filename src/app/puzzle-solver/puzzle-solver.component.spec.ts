@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PuzzleSolverComponent } from './puzzle-solver.component';
+import { AppModule } from '../app.module';
 
 describe('PuzzleSolverComponent', () => {
   let component: PuzzleSolverComponent;
@@ -8,9 +9,11 @@ describe('PuzzleSolverComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PuzzleSolverComponent ]
+      declarations: [PuzzleSolverComponent],
+      imports: [AppModule],
+      providers: [AppModule]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

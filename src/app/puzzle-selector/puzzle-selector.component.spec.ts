@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PuzzleSelectorComponent } from './puzzle-selector.component';
+import { AppModule } from '../app.module';
 
 describe('PuzzleSelectorComponent', () => {
   let component: PuzzleSelectorComponent;
@@ -8,7 +9,9 @@ describe('PuzzleSelectorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PuzzleSelectorComponent]
+      declarations: [PuzzleSelectorComponent],
+      imports: [AppModule],
+      providers: [AppModule]
     })
     .compileComponents();
 

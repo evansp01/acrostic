@@ -108,7 +108,10 @@ export class PuzzleState {
 }
 
 
-@Injectable()
+
+@Injectable({
+  providedIn: 'root'
+})
 export class PuzzleStateService {
 
   private puzzle: BehaviorSubject<PuzzleState | null>;

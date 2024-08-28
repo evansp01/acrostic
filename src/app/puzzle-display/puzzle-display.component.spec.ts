@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PuzzleDisplayComponent } from './puzzle-display.component';
+import { AppModule } from '../app.module';
 
 describe('PuzzleDisplayComponent', () => {
   let component: PuzzleDisplayComponent;
@@ -8,7 +9,9 @@ describe('PuzzleDisplayComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PuzzleDisplayComponent]
+      declarations: [PuzzleDisplayComponent],
+      imports: [AppModule],
+      providers: [AppModule]
     })
       .compileComponents();
   });

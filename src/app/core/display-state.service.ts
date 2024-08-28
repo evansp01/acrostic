@@ -61,12 +61,12 @@ export interface DisplayClue {
   readonly group: Group;
   readonly hint: string;
   readonly label: ClueLabel;
-  readonly squares: ReadonlyArray<WordSquare>;
+  readonly squares: readonly WordSquare[];
 }
 
 export interface DisplayAuthor {
   readonly group: Group;
-  readonly squares: ReadonlyArray<WordSquare>;
+  readonly squares: readonly WordSquare[];
 }
 
 export interface Display {
@@ -79,7 +79,9 @@ function clamp(min: number, x: number, max: number) {
   return Math.max(min, Math.min(max, x));
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class DisplayStateService implements OnDestroy {
   private subscriptions = new Subscription();
   private display!: Display;
