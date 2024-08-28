@@ -3,14 +3,16 @@ import { ActivatedRouteSnapshot, RedirectCommand, ResolveFn, Router, RouterModul
 import { PuzzleSolverComponent } from './puzzle-solver/puzzle-solver.component';
 import { PuzzleSelectorComponent } from './puzzle-selector/puzzle-selector.component';
 import { PuzzleLibraryService, PuzzleListing } from './core/puzzle-library.service';
-import { provideHttpClient } from '@angular/common/http';
-
+import { filter, firstValueFrom, timeout } from 'rxjs';
 
 export const puzzleResolver: ResolveFn<PuzzleListing | UrlTree> = async (
   route: ActivatedRouteSnapshot
 ) => {
   const id = route.params.id;
-  const puzzle = inject(PuzzleLibraryService).getPuzzle(id)
+  const puzzleLibrary = inject(PuzzleLibraryService);
+  // Make sure the puzzle library is loaded before trying to resolve the puzzle
+  await firstValueFrom(puzzleLibrary.getPuzzles().pipe(filter((puzzles) => puzzles.length != 0), timeout(3000)))
+  const puzzle = puzzleLibrary.getPuzzle(id)
   if (puzzle == undefined) {
     return new RedirectCommand(inject(Router).parseUrl('/'))
   }
@@ -24,11 +26,9 @@ const routes: Routes = [
 ];
 
 
-
 @NgModule({
   declarations: [],
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [provideHttpClient()],
 })
 export class AppRoutingModule { }
