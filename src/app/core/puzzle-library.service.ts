@@ -46,7 +46,7 @@ export class PuzzleLibraryService {
   constructor(private acrFormat: AcrFormatService, private localStore: LocalStateStoreService) {
     this.puzzles = new Map()
     this.subject = new BehaviorSubject<PuzzleListing[]>([])
-    interval(100).pipe(filter(() => gapi != undefined), take(1)).subscribe(() => {
+    interval(100).pipe(filter(() => typeof gapi != "undefined"), take(1)).subscribe(() => {
       gapi.load('client', () => { this.loadPuzzlesFromDrive() });
     })
   }
