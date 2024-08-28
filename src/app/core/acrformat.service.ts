@@ -49,7 +49,7 @@ export class AcrFormatService {
 
     let currentSection: string[] = []
     sections.set(_START_SECTION, currentSection)
-    for (const  split of file.split(/\r?\n/)) {
+    for (const split of file.split(/\r?\n/)) {
       const trimmed = split.trim();
       if (trimmed == "") {
         continue;
@@ -131,7 +131,7 @@ export class AcrFormatService {
       grid[j] = []
       for (let i = 0; i < line.length; i++) {
         const answer = line.charAt(i);
-        if (answer == '#') {
+        if (answer == '#' || answer == "-") {
           grid[j][i] = null;
         } else {
           const square = squares.get(mapping)

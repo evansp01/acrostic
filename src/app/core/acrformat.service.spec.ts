@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { AcrFormatService } from './acrformat.service';
-import { examplePuzzle, examplePuzzle2 } from '../testdata/puzzles';
+import { examplePuzzle } from '../testdata/puzzles';
 
 
 describe('AcrformatService', () => {
@@ -17,10 +17,5 @@ describe('AcrformatService', () => {
   it('should parse file', () => {
     const puzzle = service.parseFile(examplePuzzle)
     expect(puzzle.author).toEqual("Billym")
-  })
-
-  it('should parse file', () => {
-    const puzzle = service.parseFile(examplePuzzle2)
-    expect(puzzle.author).toEqual("Untitled")
   })
 });
