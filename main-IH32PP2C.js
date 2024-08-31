@@ -36660,6 +36660,8 @@ _PuzzleStateService.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ 
 var PuzzleStateService = _PuzzleStateService;
 
 // src/app/core/display-state.service.ts
+var GRID_LABEL = -1;
+var EXTRA_LABELS = 1;
 function toGroupIndex(l) {
   const maxWidth = 1e4;
   return l.row * maxWidth + l.column;
@@ -36701,7 +36703,6 @@ var _DisplayStateService = class _DisplayStateService {
     const displayClues = [];
     for (const [index, clue] of puzzle.clues.entries()) {
       displayClues.push({
-        group: index + 1,
         hint: clue.hint,
         label: clue.label,
         squares: clue.mapping.map((v, i) => {
@@ -36721,17 +36722,6 @@ var _DisplayStateService = class _DisplayStateService {
         })
       });
     }
-    const displayAuthor = {
-      group: -1,
-      squares: displayClues.map((c) => {
-        return {
-          group: -1,
-          index: c.label,
-          value: c.squares[0].value,
-          focused: false
-        };
-      })
-    };
     const squareMap = /* @__PURE__ */ new Map();
     const grid = puzzle.grid.grid.map((row, j) => row.map((square, i) => {
       const gridSquare = {
@@ -36754,7 +36744,6 @@ var _DisplayStateService = class _DisplayStateService {
         display: grid,
         valueToSquare: squareMap
       },
-      author: displayAuthor,
       clues: displayClues
     };
   }
@@ -36769,14 +36758,11 @@ var _DisplayStateService = class _DisplayStateService {
     this.display.grid.display.forEach((row) => row.forEach((square) => {
       square.focused = false;
     }));
-    this.display.author.squares.forEach((square) => {
-      square.focused = false;
-    });
     this.display.clues.forEach((clue) => clue.squares.forEach((square) => {
       square.focused = false;
       square.value.state = DisplayState.REGULAR;
     }));
-    if (cursor.label == -2) {
+    if (cursor.label == GRID_LABEL) {
       const location2 = toLocation(cursor.value);
       const square = this.display.grid.display[location2.row][location2.column];
       square.focused = true;
@@ -36784,11 +36770,6 @@ var _DisplayStateService = class _DisplayStateService {
         square.value.state = DisplayState.HIGHLIGHTED;
         this.currentClue.next(square.value.label);
       }
-    } else if (cursor.label == -1) {
-      const square = this.display.author.squares[cursor.value];
-      square.focused = true;
-      square.value.state = DisplayState.HIGHLIGHTED;
-      this.currentClue.next(square.value.label);
     } else {
       const square = this.display.clues[cursor.label].squares[cursor.value];
       square.focused = true;
@@ -36802,15 +36783,12 @@ var _DisplayStateService = class _DisplayStateService {
   getClues() {
     return this.display.clues;
   }
-  getAuthor() {
-    return this.display.author;
-  }
   getState() {
     return this.puzzleState;
   }
   moveAcross(step) {
     const cursor = this.cursor;
-    if (cursor.label == -2) {
+    if (cursor.label == GRID_LABEL) {
       const location2 = toLocation(cursor.value);
       const newLocation = {
         row: location2.row,
@@ -36819,11 +36797,6 @@ var _DisplayStateService = class _DisplayStateService {
       this.updateDisplayHighlighting({
         label: cursor.label,
         value: toGroupIndex(newLocation)
-      });
-    } else if (cursor.label == -1) {
-      this.updateDisplayHighlighting({
-        label: cursor.label,
-        value: clamp(0, cursor.value + step, this.display.author.squares.length - 1)
       });
     } else {
       const clue = this.display.clues[cursor.label];
@@ -36835,7 +36808,7 @@ var _DisplayStateService = class _DisplayStateService {
   }
   moveToGridSquare(square) {
     this.updateDisplayHighlighting({
-      label: -2,
+      label: GRID_LABEL,
       value: toGroupIndex(square.location)
     });
   }
@@ -36847,7 +36820,7 @@ var _DisplayStateService = class _DisplayStateService {
   }
   moveDown(step) {
     const cursor = this.cursor;
-    if (cursor.label == -2) {
+    if (cursor.label == GRID_LABEL) {
       const location2 = toLocation(cursor.value);
       const newLocation = {
         row: clamp(0, location2.row + step, this.display.grid.rows - 1),
@@ -36861,7 +36834,7 @@ var _DisplayStateService = class _DisplayStateService {
   }
   moveGroup(step) {
     const cursor = this.cursor;
-    const newGroup = (2 + cursor.label + step) % (2 + this.display.clues.length) - 2;
+    const newGroup = (EXTRA_LABELS + cursor.label + step) % (EXTRA_LABELS + this.display.clues.length) - EXTRA_LABELS;
     this.updateDisplayHighlighting({
       label: newGroup,
       value: 0
@@ -36869,7 +36842,7 @@ var _DisplayStateService = class _DisplayStateService {
   }
   mutateAndStep(value, step) {
     const cursor = this.cursor;
-    if (cursor.label == -2) {
+    if (cursor.label == GRID_LABEL) {
       const location2 = toLocation(cursor.value);
       const square = this.display.grid.display[location2.row][location2.column];
       if (square.value == null) {
@@ -36884,10 +36857,6 @@ var _DisplayStateService = class _DisplayStateService {
         label: cursor.label,
         value: toGroupIndex(nextSquare.location)
       });
-    } else if (cursor.label == -1) {
-      const square = this.display.author.squares[cursor.value];
-      this.puzzleState.setValue(cursor, square.value.mapping, value);
-      this.moveAcross(step);
     } else {
       const clue = this.display.clues[cursor.label];
       const square = clue.squares[cursor.value];
@@ -36907,7 +36876,7 @@ function PuzzleDisplayComponent__svg_ng_container_2__svg_ng_container_1_Conditio
   if (rf & 1) {
     const _r4 = \u0275\u0275getCurrentView();
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(0, "text", 8);
+    \u0275\u0275elementStart(0, "text", 6);
     \u0275\u0275listener("click", function PuzzleDisplayComponent__svg_ng_container_2__svg_ng_container_1_Conditional_2_Template_text_click_0_listener() {
       \u0275\u0275restoreView(_r4);
       const square_r2 = \u0275\u0275nextContext().$implicit;
@@ -36916,7 +36885,7 @@ function PuzzleDisplayComponent__svg_ng_container_2__svg_ng_container_1_Conditio
     });
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(2, "text", 9);
+    \u0275\u0275elementStart(2, "text", 7);
     \u0275\u0275listener("click", function PuzzleDisplayComponent__svg_ng_container_2__svg_ng_container_1_Conditional_2_Template_text_click_2_listener() {
       \u0275\u0275restoreView(_r4);
       const square_r2 = \u0275\u0275nextContext().$implicit;
@@ -36925,7 +36894,7 @@ function PuzzleDisplayComponent__svg_ng_container_2__svg_ng_container_1_Conditio
     });
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "text", 10);
+    \u0275\u0275elementStart(4, "text", 8);
     \u0275\u0275listener("click", function PuzzleDisplayComponent__svg_ng_container_2__svg_ng_container_1_Conditional_2_Template_text_click_4_listener() {
       \u0275\u0275restoreView(_r4);
       const square_r2 = \u0275\u0275nextContext().$implicit;
@@ -36956,7 +36925,7 @@ function PuzzleDisplayComponent__svg_ng_container_2__svg_ng_container_1_Template
     const _r1 = \u0275\u0275getCurrentView();
     \u0275\u0275namespaceSVG();
     \u0275\u0275elementContainerStart(0);
-    \u0275\u0275elementStart(1, "rect", 7);
+    \u0275\u0275elementStart(1, "rect", 5);
     \u0275\u0275listener("click", function PuzzleDisplayComponent__svg_ng_container_2__svg_ng_container_1_Template_rect_click_1_listener() {
       const square_r2 = \u0275\u0275restoreView(_r1).$implicit;
       const ctx_r2 = \u0275\u0275nextContext(2);
@@ -36989,17 +36958,17 @@ function PuzzleDisplayComponent__svg_ng_container_2_Template(rf, ctx) {
     \u0275\u0275property("ngForOf", row_r5);
   }
 }
-function PuzzleDisplayComponent_ng_container_5_Template(rf, ctx) {
+function PuzzleDisplayComponent_ng_container_5_ng_container_5_Template(rf, ctx) {
   if (rf & 1) {
     const _r6 = \u0275\u0275getCurrentView();
     \u0275\u0275elementContainerStart(0);
-    \u0275\u0275elementStart(1, "div", 11);
-    \u0275\u0275listener("click", function PuzzleDisplayComponent_ng_container_5_Template_div_click_1_listener() {
+    \u0275\u0275elementStart(1, "div", 12);
+    \u0275\u0275listener("click", function PuzzleDisplayComponent_ng_container_5_ng_container_5_Template_div_click_1_listener() {
       const square_r7 = \u0275\u0275restoreView(_r6).$implicit;
-      const ctx_r2 = \u0275\u0275nextContext();
+      const ctx_r2 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r2.wordClicked(square_r7));
     });
-    \u0275\u0275elementStart(2, "span", 12);
+    \u0275\u0275elementStart(2, "span");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "span", 13);
@@ -37009,64 +36978,35 @@ function PuzzleDisplayComponent_ng_container_5_Template(rf, ctx) {
   }
   if (rf & 2) {
     const square_r7 = ctx.$implicit;
-    const ctx_r2 = \u0275\u0275nextContext();
+    const ctx_r2 = \u0275\u0275nextContext(2);
     \u0275\u0275advance();
     \u0275\u0275classMap(ctx_r2.getWordClass(square_r7));
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(square_r7.value.value);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(ctx_r2.displayLabel(square_r7.value.label));
+    \u0275\u0275textInterpolate(square_r7.value.mapping);
   }
 }
-function PuzzleDisplayComponent_ng_container_8_ng_container_5_Template(rf, ctx) {
+function PuzzleDisplayComponent_ng_container_5_Template(rf, ctx) {
   if (rf & 1) {
-    const _r8 = \u0275\u0275getCurrentView();
     \u0275\u0275elementContainerStart(0);
-    \u0275\u0275elementStart(1, "div", 11);
-    \u0275\u0275listener("click", function PuzzleDisplayComponent_ng_container_8_ng_container_5_Template_div_click_1_listener() {
-      const square_r9 = \u0275\u0275restoreView(_r8).$implicit;
-      const ctx_r2 = \u0275\u0275nextContext(2);
-      return \u0275\u0275resetView(ctx_r2.wordClicked(square_r9));
-    });
-    \u0275\u0275elementStart(2, "span", 12);
+    \u0275\u0275elementStart(1, "div", 9)(2, "p", 10);
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "span", 13);
-    \u0275\u0275text(5);
+    \u0275\u0275elementStart(4, "div", 11);
+    \u0275\u0275template(5, PuzzleDisplayComponent_ng_container_5_ng_container_5_Template, 6, 4, "ng-container", 2);
     \u0275\u0275elementEnd()();
     \u0275\u0275elementContainerEnd();
   }
   if (rf & 2) {
-    const square_r9 = ctx.$implicit;
-    const ctx_r2 = \u0275\u0275nextContext(2);
-    \u0275\u0275advance();
-    \u0275\u0275classMap(ctx_r2.getWordClass(square_r9));
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(square_r9.value.value);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(square_r9.value.mapping);
-  }
-}
-function PuzzleDisplayComponent_ng_container_8_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementContainerStart(0);
-    \u0275\u0275elementStart(1, "div", 14)(2, "p", 15);
-    \u0275\u0275text(3);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 4);
-    \u0275\u0275template(5, PuzzleDisplayComponent_ng_container_8_ng_container_5_Template, 6, 4, "ng-container", 2);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementContainerEnd();
-  }
-  if (rf & 2) {
-    const clue_r10 = ctx.$implicit;
+    const clue_r8 = ctx.$implicit;
     const ctx_r2 = \u0275\u0275nextContext();
     \u0275\u0275advance();
-    \u0275\u0275property("id", ctx_r2.clueId(clue_r10.label));
+    \u0275\u0275property("id", ctx_r2.clueId(clue_r8.label));
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate2("", ctx_r2.displayLabel(clue_r10.label), ". ", clue_r10.hint, "");
+    \u0275\u0275textInterpolate2("", ctx_r2.displayLabel(clue_r8.label), ". ", clue_r8.hint, "");
     \u0275\u0275advance(2);
-    \u0275\u0275property("ngForOf", clue_r10.squares);
+    \u0275\u0275property("ngForOf", clue_r8.squares);
   }
 }
 var _PuzzleDisplayComponent = class _PuzzleDisplayComponent {
@@ -37214,7 +37154,7 @@ _PuzzleDisplayComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent(
       return ctx.onKeyPress($event);
     }, false, \u0275\u0275resolveWindow);
   }
-}, decls: 9, vars: 6, consts: [[1, "flex", "justify-center", "w-full", "flex-shrink-0"], ["id", "crossword", "xmlns", "http://www.w3.org/2000/svg", "preserveAspectRatio", "xMidYMin meet", 1, "max-h-[45vh]", "w-full"], [4, "ngFor", "ngForOf"], [1, "clue-container", "flex", "justify-center", "py-1", "flex-shrink-0"], [1, "answer"], [1, "flex-1", "overflow-y-auto", "px-4"], [1, "grid", "grid-cols-3", "gap-2"], ["width", "40", "height", "40", 3, "click"], ["text-anchor", "middle", 1, "square-text", 3, "click"], ["text-anchor", "start", 1, "square-label", 3, "click"], ["text-anchor", "end", 1, "square-number", 3, "click"], [3, "click"], [1, "inputText"], [1, "letter-number"], [1, "clue-container", 3, "id"], [1, "clue"]], template: function PuzzleDisplayComponent_Template(rf, ctx) {
+}, decls: 6, vars: 5, consts: [[1, "flex", "justify-center", "w-full", "flex-shrink-0"], ["id", "crossword", "xmlns", "http://www.w3.org/2000/svg", "preserveAspectRatio", "xMidYMin meet", 1, "max-h-[45vh]", "w-full"], [4, "ngFor", "ngForOf"], [1, "flex-1", "overflow-y-auto", "px-4", "mt-4", "mb-2"], [1, "grid", "grid-cols-3", "gap-2"], ["width", "40", "height", "40", 3, "click"], ["text-anchor", "middle", 1, "square-text", 3, "click"], ["text-anchor", "start", 1, "square-label", 3, "click"], ["text-anchor", "end", 1, "square-number", 3, "click"], [1, "clue-container", 3, "id"], [1, "clue"], [1, "flex"], [3, "click"], [1, "letter-number"]], template: function PuzzleDisplayComponent_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 0);
     \u0275\u0275namespaceSVG();
@@ -37225,9 +37165,6 @@ _PuzzleDisplayComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent(
     \u0275\u0275elementStart(3, "div", 3)(4, "div", 4);
     \u0275\u0275template(5, PuzzleDisplayComponent_ng_container_5_Template, 6, 4, "ng-container", 2);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(6, "div", 5)(7, "div", 6);
-    \u0275\u0275template(8, PuzzleDisplayComponent_ng_container_8_Template, 6, 4, "ng-container", 2);
-    \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     \u0275\u0275advance();
@@ -37235,8 +37172,6 @@ _PuzzleDisplayComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent(
     \u0275\u0275attribute("viewBox", ctx.getViewBox());
     \u0275\u0275advance();
     \u0275\u0275property("ngForOf", ctx.grid.getDisplay());
-    \u0275\u0275advance(3);
-    \u0275\u0275property("ngForOf", ctx.grid.getAuthor().squares);
     \u0275\u0275advance(3);
     \u0275\u0275property("ngForOf", ctx.grid.getClues());
   }
