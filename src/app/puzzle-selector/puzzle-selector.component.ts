@@ -9,7 +9,7 @@ import { AcrFormatService } from '../core/acrformat.service';
 })
 export class PuzzleSelectorComponent implements OnInit {
 
-  constructor(private puzzleLibrary: PuzzleLibraryService, private acrFormat: AcrFormatService, private  changeDetector: ChangeDetectorRef) {
+  constructor(private puzzleLibrary: PuzzleLibraryService, private acrFormat: AcrFormatService, private changeDetector: ChangeDetectorRef) {
   }
 
   ngOnInit() {
@@ -18,7 +18,7 @@ export class PuzzleSelectorComponent implements OnInit {
     })
   }
 
-  puzzles(): Array<PuzzleListing> {
+  puzzles(): PuzzleListing[] {
     return this.puzzleLibrary.getPuzzles().value
   }
 

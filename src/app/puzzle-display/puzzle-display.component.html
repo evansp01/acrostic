@@ -22,22 +22,12 @@
     </ng-container>
   </svg>
 </div>
-<div class="clue-container flex justify-center py-1 flex-shrink-0">
-  <div class="answer">
-    <ng-container *ngFor="let square of grid.getAuthor().squares">
-      <div [class]="getWordClass(square)" (click)="wordClicked(square)">
-        <span class="inputText">{{square.value.value}}</span>
-        <span class="letter-number">{{displayLabel(square.value.label)}}</span>
-      </div>
-    </ng-container>
-  </div>
-</div>
 <div class="flex-1 overflow-y-auto px-4">
   <div class="grid grid-cols-3 gap-2">
     <ng-container *ngFor="let clue of grid.getClues()">
       <div class="clue-container" [id]="clueId(clue.label)">
         <p class="clue">{{displayLabel(clue.label)}}. {{clue.hint}}</p>
-        <div class="answer">
+        <div class="flex">
           <ng-container *ngFor="let square of clue.squares">
             <div [class]="getWordClass(square)" (click)="wordClicked(square)">
               <span class="inputText">{{square.value.value}}</span>
