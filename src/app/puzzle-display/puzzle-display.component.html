@@ -23,7 +23,7 @@
   </svg>
 </div>
 <div class="flex-1 overflow-y-auto px-4 mt-4 mb-2">
-  <div class="grid grid-cols-3 gap-2">
+  <div class="columns-3 gap-2">
     <ng-container *ngFor="let clue of grid.getClues()">
       <div class="clue-container" [id]="clueId(clue.label)">
         <p class="clue">{{displayLabel(clue.label)}}. {{clue.hint}}</p>
