@@ -37154,7 +37154,7 @@ _PuzzleDisplayComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent(
       return ctx.onKeyPress($event);
     }, false, \u0275\u0275resolveWindow);
   }
-}, decls: 6, vars: 5, consts: [[1, "flex", "justify-center", "w-full", "flex-shrink-0"], ["id", "crossword", "xmlns", "http://www.w3.org/2000/svg", "preserveAspectRatio", "xMidYMin meet", 1, "max-h-[45vh]", "w-full"], [4, "ngFor", "ngForOf"], [1, "flex-1", "overflow-y-auto", "px-4", "mt-4", "mb-2"], [1, "grid", "grid-cols-3", "gap-2"], ["width", "40", "height", "40", 3, "click"], ["text-anchor", "middle", 1, "square-text", 3, "click"], ["text-anchor", "start", 1, "square-label", 3, "click"], ["text-anchor", "end", 1, "square-number", 3, "click"], [1, "clue-container", 3, "id"], [1, "clue"], [1, "flex"], [3, "click"], [1, "letter-number"]], template: function PuzzleDisplayComponent_Template(rf, ctx) {
+}, decls: 6, vars: 5, consts: [[1, "flex", "justify-center", "w-full", "flex-shrink-0"], ["id", "crossword", "xmlns", "http://www.w3.org/2000/svg", "preserveAspectRatio", "xMidYMin meet", 1, "max-h-[45vh]", "w-full"], [4, "ngFor", "ngForOf"], [1, "flex-1", "overflow-y-auto", "px-4", "mt-4", "mb-2"], [1, "columns-3", "gap-2"], ["width", "40", "height", "40", 3, "click"], ["text-anchor", "middle", 1, "square-text", 3, "click"], ["text-anchor", "start", 1, "square-label", 3, "click"], ["text-anchor", "end", 1, "square-number", 3, "click"], [1, "clue-container", 3, "id"], [1, "clue"], [1, "flex"], [3, "click"], [1, "letter-number"]], template: function PuzzleDisplayComponent_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 0);
     \u0275\u0275namespaceSVG();
